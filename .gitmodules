@@ -1,1 +1,4 @@
 
+[submodule "tesoro"]
+	path = tesoro
+	url = https://github.com/tesoroproject/tesoro
