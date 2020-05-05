@@ -1,4 +1,1 @@
-[submodule "monero"]
-	path = monero
-	url = https://github.com/monero-project/monero
-	ignore = all
+
