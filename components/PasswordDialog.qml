@@ -253,9 +253,6 @@ Item {
                 Keys.enabled: root.visible
                 Keys.onEnterPressed: Keys.onReturnPressed(event)
                 Keys.onReturnPressed: {
-                    if (!passwordDialogMode && passwordInput1.text !== passwordInput2.text) {
-                        return;
-                    }
                     root.close()
                     if (passwordDialogMode) {
                         root.accepted()

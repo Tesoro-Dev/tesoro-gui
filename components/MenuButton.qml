@@ -62,7 +62,7 @@ Rectangle {
     height: present ? ((appWindow.height >= 800) ? 44  : 38 ) : 0
 
     LinearGradient {
-        visible: isOpenGL && (button.checked || buttonArea.containsMouse)
+        visible: isOpenGL && button.checked
         height: parent.height
         width: 260
         anchors.verticalCenter: parent.verticalCenter
@@ -75,15 +75,13 @@ Rectangle {
             GradientStop { position: 0.0; color: MoneroComponents.Style.menuButtonGradientStart }
             GradientStop { position: 1.0; color: MoneroComponents.Style.menuButtonGradientStop }
         }
-        opacity: button.checked ? 1 : 0.3
     }
 
     // fallback hover effect when opengl is not available
     Rectangle {
-        visible: !isOpenGL && (button.checked || buttonArea.containsMouse)
+        visible: !isOpenGL && button.checked
         anchors.fill: parent
         color: MoneroComponents.Style.menuButtonFallbackBackgroundColor
-        opacity: button.checked ? 1 : 0.3
     }
 
     // button decorations that are subject to leftMargin offsets

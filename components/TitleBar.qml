@@ -181,13 +181,13 @@ Rectangle {
         Item {
             // make dummy space when hiding buttons when titlebar
             // state is 'essentials' in order for the
-            // monero logo to still be centered
+            // tesoro logo to still be centered
             Layout.preferredWidth: parent.height * 2  // amount of buttons we hide
             Layout.preferredHeight: parent.height
             visible: root.state == "essentials"
         }
 
-        // monero logo
+        // tesoro logo
         Item {
             visible: walletName.length === 0
             Layout.fillWidth: true
@@ -309,8 +309,8 @@ Rectangle {
                 width: 16
                 image: MoneroComponents.Style.titleBarCloseSource
                 color: MoneroComponents.Style.defaultFontColor
-                fontAwesomeFallbackIcon: FontAwesome.times
-                fontAwesomeFallbackSize: 21
+                fontAwesomeFallbackIcon: FontAwesome.timesRectangle
+                fontAwesomeFallbackSize: 18
                 fontAwesomeFallbackOpacity: MoneroComponents.Style.blackTheme ? 0.8 : 0.6
                 opacity: 0.75
             }

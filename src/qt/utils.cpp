@@ -37,24 +37,6 @@ bool fileExists(QString path) {
     return check_file.exists() && check_file.isFile();
 }
 
-QByteArray fileGetContents(QString path)
-{
-    QFile file(path);
-    if (!file.open(QFile::ReadOnly))
-    {
-        throw std::runtime_error(QString("failed to open %1").arg(path).toStdString());
-    }
-
-    QByteArray data;
-    data.resize(file.size());
-    if (file.read(data.data(), data.size()) != data.size())
-    {
-        throw std::runtime_error(QString("failed to read %1").arg(path).toStdString());
-    }
-
-    return data;
-}
-
 QByteArray fileOpen(QString path) {
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text))
@@ -81,7 +63,7 @@ QString getAccountName(){
     if (accountName.isEmpty())
         accountName = qgetenv("USERNAME"); // Windows
     if (accountName.isEmpty())
-        accountName = "My monero Account";
+        accountName = "My tesoro Account";
     return accountName;
 }
 
@@ -89,17 +71,17 @@ QString getAccountName(){
 QString xdgMime(QApplication &app){
     return QString(
         "[Desktop Entry]\n"
-        "Name=Monero GUI\n"
-        "GenericName=Monero-GUI\n"
-        "X-GNOME-FullName=Monero-GUI\n"
-        "Comment=Monero GUI\n"
-        "Keywords=Monero;\n"
+        "Name=Tesoro GUI\n"
+        "GenericName=Tesoro-GUI\n"
+        "X-GNOME-FullName=Tesoro-GUI\n"
+        "Comment=Tesoro GUI\n"
+        "Keywords=Tesoro;\n"
         "Exec=%1 %u\n"
         "Terminal=false\n"
         "Type=Application\n"
-        "Icon=monero\n"
+        "Icon=tesoro\n"
         "Categories=Network;GNOME;Qt;\n"
-        "MimeType=x-scheme-handler/monero;x-scheme-handler/moneroseed\n"
+        "MimeType=x-scheme-handler/tesoro;x-scheme-handler/moneroseed\n"
         "StartupNotify=true\n"
         "X-GNOME-Bugzilla-Bugzilla=GNOME\n"
         "X-GNOME-UsesNotifications=true\n"
@@ -114,7 +96,7 @@ void registerXdgMime(QApplication &app){
     // - Tails written to persistent dotfiles
     QString mime = xdgMime(app);
     QString appPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
-    QString filePath = QString("%1/monero-gui.desktop").arg(appPath);
+    QString filePath = QString("%1/tesoro-gui.desktop").arg(appPath);
 
     if (TailsOS::detect() && TailsOS::detectDotPersistence() && TailsOS::usePersistence) {
         TailsOS::persistXdgMime(filePath, mime);

@@ -27,7 +27,6 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "DaemonManager.h"
-#include <QElapsedTimer>
 #include <QFile>
 #include <QThread>
 #include <QFileInfo>
@@ -37,6 +36,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QApplication>
 #include <QProcess>
+#include <QTime>
 #include <QStorageInfo>
 #include <QVariantMap>
 #include <QVariant>
@@ -49,15 +49,13 @@ namespace {
 DaemonManager * DaemonManager::m_instance = nullptr;
 QStringList DaemonManager::m_clArgs;
 
-DaemonManager *DaemonManager::instance(const QStringList *args/* = nullptr*/)
+DaemonManager *DaemonManager::instance(const QStringList *args)
 {
     if (!m_instance) {
         m_instance = new DaemonManager;
         // store command line arguments for later use
-        if (args != nullptr)
-        {
-            m_clArgs = *args;
-        }
+        m_clArgs = *args;
+        m_clArgs.removeFirst();
     }
 
     return m_instance;
@@ -65,13 +63,13 @@ DaemonManager *DaemonManager::instance(const QStringList *args/* = nullptr*/)
 
 bool DaemonManager::start(const QString &flags, NetworkType::Type nettype, const QString &dataDir, const QString &bootstrapNodeAddress, bool noSync /* = false*/)
 {
-    if (!QFileInfo(m_monerod).isFile())
+    if (!QFileInfo(m_tesorod).isFile())
     {
-        emit daemonStartFailure("\"" + QDir::toNativeSeparators(m_monerod) + "\" " + tr("executable is missing"));
+        emit daemonStartFailure("\"" + QDir::toNativeSeparators(m_tesorod) + "\" " + tr("executable is missing"));
         return false;
     }
 
-    // prepare command line arguments and pass to monerod
+    // prepare command line arguments and pass to tesorod
     QStringList arguments;
 
     // Start daemon with --detach flag on non-windows platforms
@@ -120,7 +118,7 @@ bool DaemonManager::start(const QString &flags, NetworkType::Type nettype, const
         arguments << "--max-concurrency" << QString::number(concurrency);
     }
 
-    qDebug() << "starting monerod " + m_monerod;
+    qDebug() << "starting tesorod " + m_tesorod;
     qDebug() << "With command line arguments " << arguments;
 
     m_daemon = new QProcess();
@@ -130,8 +128,8 @@ bool DaemonManager::start(const QString &flags, NetworkType::Type nettype, const
     connect (m_daemon, SIGNAL(readyReadStandardOutput()), this, SLOT(printOutput()));
     connect (m_daemon, SIGNAL(readyReadStandardError()), this, SLOT(printError()));
 
-    // Start monerod
-    bool started = m_daemon->startDetached(m_monerod, arguments);
+    // Start tesorod
+    bool started = m_daemon->startDetached(m_tesorod, arguments);
 
     // add state changed listener
     connect(m_daemon,SIGNAL(stateChanged(QProcess::ProcessState)),this,SLOT(stateChanged(QProcess::ProcessState)));
@@ -155,26 +153,28 @@ bool DaemonManager::start(const QString &flags, NetworkType::Type nettype, const
     return true;
 }
 
-void DaemonManager::stopAsync(NetworkType::Type nettype, const QJSValue& callback)
+bool DaemonManager::stop(NetworkType::Type nettype)
 {
-    const auto feature = m_scheduler.run([this, nettype] {
-        QString message;
-        sendCommand({"exit"}, nettype, message);
+    QString message;
+    sendCommand({"exit"}, nettype, message);
+    qDebug() << message;
 
-        return QJSValueList({stopWatcher(nettype)});
-    }, callback);
+    // Start stop watcher - Will kill if not shutting down
+    m_scheduler.run([this, nettype] {
+        if (stopWatcher(nettype))
+        {
+            emit daemonStopped();
+        }
+    });
 
-    if (!feature.first)
-    {
-        QJSValue(callback).call(QJSValueList({false}));
-    }
+    return true;
 }
 
 bool DaemonManager::startWatcher(NetworkType::Type nettype) const
 {
     // Check if daemon is started every 2 seconds
-    QElapsedTimer timer;
-    timer.start();
+    QTime timer;
+    timer.restart();
     while(true && !m_app_exit && timer.elapsed() / 1000 < DAEMON_START_TIMEOUT_SECONDS  ) {
         QThread::sleep(2);
         if(!running(nettype)) {
@@ -200,9 +200,9 @@ bool DaemonManager::stopWatcher(NetworkType::Type nettype) const
             if(counter >= 5) {
                 qDebug() << "Killing it! ";
 #ifdef Q_OS_WIN
-                QProcess::execute("taskkill /F /IM monerod.exe");
+                QProcess::execute("taskkill /F /IM tesorod.exe");
 #else
-                QProcess::execute("pkill monerod");
+                QProcess::execute("pkill tesorod");
 #endif
             }
 
@@ -277,7 +277,7 @@ bool DaemonManager::sendCommand(const QStringList &cmd, NetworkType::Type nettyp
     qDebug() << "sending external cmd: " << external_cmd;
 
 
-    p.start(m_monerod, external_cmd);
+    p.start(m_tesorod, external_cmd);
 
     bool started = p.waitForFinished(-1);
     message = p.readAllStandardOutput();
@@ -342,14 +342,14 @@ DaemonManager::DaemonManager(QObject *parent)
     , m_scheduler(this)
 {
 
-    // Platform depetent path to monerod
+    // Platform depetent path to tesorod
 #ifdef Q_OS_WIN
-    m_monerod = QApplication::applicationDirPath() + "/monerod.exe";
+    m_tesorod = QApplication::applicationDirPath() + "/tesorod.exe";
 #elif defined(Q_OS_UNIX)
-    m_monerod = QApplication::applicationDirPath() + "/monerod";
+    m_tesorod = QApplication::applicationDirPath() + "/tesorod";
 #endif
 
-    if (m_monerod.length() == 0) {
+    if (m_tesorod.length() == 0) {
         qCritical() << "no daemon binary defined for current platform";
         m_has_daemon = false;
     }

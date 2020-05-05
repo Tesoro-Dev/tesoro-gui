@@ -29,21 +29,21 @@
 #ifndef WALLET_H
 #define WALLET_H
 
-#include <QElapsedTimer>
 #include <QObject>
+#include <QTime>
 #include <QMutex>
 #include <QList>
 #include <QJSValue>
 #include <QtConcurrent/QtConcurrent>
 
-#include "wallet/api/wallet2_api.h" // we need to have an access to the Monero::Wallet::Status enum here;
+#include "wallet/api/wallet2_api.h" // we need to have an access to the Tesoro::Wallet::Status enum here;
 #include "qt/FutureScheduler.h"
 #include "PendingTransaction.h" // we need to have an access to the PendingTransaction::Priority enum here;
 #include "UnsignedTransaction.h"
 #include "NetworkType.h"
 
-namespace Monero {
-struct Wallet; // forward declaration
+namespace Tesoro {
+    class Wallet; // forward declaration
 }
 
 
@@ -74,7 +74,7 @@ class Wallet : public QObject
     Q_PROPERTY(TransactionHistorySortFilterModel * historyModel READ historyModel NOTIFY historyModelChanged)
     Q_PROPERTY(QString path READ path)
     Q_PROPERTY(AddressBookModel * addressBookModel READ addressBookModel)
-    Q_PROPERTY(AddressBook * addressBook READ addressBook NOTIFY addressBookChanged)
+    Q_PROPERTY(AddressBook * addressBook READ addressBook)
     Q_PROPERTY(SubaddressModel * subaddressModel READ subaddressModel)
     Q_PROPERTY(Subaddress * subaddress READ subaddress)
     Q_PROPERTY(SubaddressAccountModel * subaddressAccountModel READ subaddressAccountModel)
@@ -91,17 +91,17 @@ public:
 
 
     enum Status {
-        Status_Ok       = Monero::Wallet::Status_Ok,
-        Status_Error    = Monero::Wallet::Status_Error,
-        Status_Critical = Monero::Wallet::Status_Critical
+        Status_Ok       = Tesoro::Wallet::Status_Ok,
+        Status_Error    = Tesoro::Wallet::Status_Error,
+        Status_Critical = Tesoro::Wallet::Status_Critical
     };
 
     Q_ENUM(Status)
 
     enum ConnectionStatus {
-        ConnectionStatus_Connected       = Monero::Wallet::ConnectionStatus_Connected,
-        ConnectionStatus_Disconnected    = Monero::Wallet::ConnectionStatus_Disconnected,
-        ConnectionStatus_WrongVersion    = Monero::Wallet::ConnectionStatus_WrongVersion,
+        ConnectionStatus_Connected       = Tesoro::Wallet::ConnectionStatus_Connected,
+        ConnectionStatus_Disconnected    = Tesoro::Wallet::ConnectionStatus_Disconnected,
+        ConnectionStatus_WrongVersion    = Tesoro::Wallet::ConnectionStatus_WrongVersion,
         ConnectionStatus_Connecting
     };
 
@@ -250,11 +250,6 @@ public:
     //! deletes unsigned transaction and frees memory
     Q_INVOKABLE void disposeTransaction(UnsignedTransaction * t);
 
-    Q_INVOKABLE void estimateTransactionFeeAsync(const QString &destination,
-                                                 quint64 amount,
-                                                 PendingTransaction::Priority priority,
-                                                 const QJSValue &callback);
-
     //! returns transaction history
     TransactionHistory * history() const;
 
@@ -362,7 +357,6 @@ signals:
     void moneyReceived(const QString &txId, quint64 amount);
     void unconfirmedMoneyReceived(const QString &txId, quint64 amount);
     void newBlock(quint64 height, quint64 targetHeight);
-    void addressBookChanged() const;
     void historyModelChanged() const;
     void walletCreationHeightChanged();
     void deviceButtonRequest(quint64 buttonCode);
@@ -380,7 +374,7 @@ signals:
 
 private:
     Wallet(QObject * parent = nullptr);
-    Wallet(Monero::Wallet *w, QObject * parent = 0);
+    Wallet(Tesoro::Wallet *w, QObject * parent = 0);
     ~Wallet();
 
     //! returns current wallet's block height
@@ -403,7 +397,7 @@ private:
     friend class WalletManager;
     friend class WalletListenerImpl;
     //! libwallet's
-    Monero::Wallet * m_walletImpl;
+    Tesoro::Wallet * m_walletImpl;
     // history lifetime managed by wallet;
     TransactionHistory * m_history;
     // Used for UI history view
@@ -412,15 +406,15 @@ private:
     QString m_paymentId;
     AddressBook * m_addressBook;
     mutable AddressBookModel * m_addressBookModel;
-    mutable QElapsedTimer m_daemonBlockChainHeightTime;
+    mutable QTime   m_daemonBlockChainHeightTime;
     mutable quint64 m_daemonBlockChainHeight;
     int     m_daemonBlockChainHeightTtl;
-    mutable QElapsedTimer m_daemonBlockChainTargetHeightTime;
+    mutable QTime   m_daemonBlockChainTargetHeightTime;
     mutable quint64 m_daemonBlockChainTargetHeight;
     int     m_daemonBlockChainTargetHeightTtl;
     mutable ConnectionStatus m_connectionStatus;
     int     m_connectionStatusTtl;
-    mutable QElapsedTimer m_connectionStatusTime;
+    mutable QTime   m_connectionStatusTime;
     bool m_disconnected;
     mutable bool    m_initialized;
     uint32_t m_currentSubaddressAccount;
@@ -432,7 +426,7 @@ private:
     bool m_connectionStatusRunning;
     QString m_daemonUsername;
     QString m_daemonPassword;
-    Monero::WalletListener *m_walletListener;
+    Tesoro::WalletListener *m_walletListener;
     FutureScheduler m_scheduler;
 };
 

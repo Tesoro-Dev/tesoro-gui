@@ -1,71 +1,41 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.1
-import FontAwesome 1.0
 
 import "../components" as MoneroComponents
 
 ColumnLayout {
-    id: settingsListItem
-    property alias iconText: iconLabel.text
-    property alias description: area.text
-    property alias title: header.text
-    property bool isLast: false
+    property alias buttonText: button.text
+    property alias description: description.text
+    property alias title: title.text
     signal clicked()
 
+    id: settingsListItem
     Layout.fillWidth: true
     spacing: 0
 
     Rectangle {
-        id: root
+        // divider
+        Layout.preferredHeight: 1
         Layout.fillWidth: true
-        Layout.minimumHeight: 75
-        Layout.preferredHeight: rect.height + 15
-        color: "transparent"
+        Layout.bottomMargin: 8
+        color: MoneroComponents.Style.dividerColor
+        opacity: MoneroComponents.Style.dividerOpacity
+    }
 
-        Rectangle {
-            id: divider
-            anchors.topMargin: 0
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: MoneroComponents.Style.dividerColor
-            opacity: MoneroComponents.Style.dividerOpacity
-        }
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 0
 
-        Rectangle {
-            id: rect
-            width: parent.width
-            height: header.height + area.contentHeight
-            color: "transparent";
-            anchors.left: parent.left
-            anchors.bottomMargin: 4
-            anchors.topMargin: 4
-            anchors.verticalCenter: parent.verticalCenter
-
-            Rectangle {
-                id: icon
-                color: "transparent"
-                height: 32
-                width: 32
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-                anchors.verticalCenter: parent.verticalCenter
-
-                MoneroComponents.Label {
-                    id: iconLabel
-                    fontSize: 32
-                    fontFamily: FontAwesome.fontFamilySolid
-                    anchors.centerIn: parent
-                    fontColor: MoneroComponents.Style.defaultFontColor
-                    styleName: "Solid"
-                }
-            }
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
+            spacing: 0
 
             MoneroComponents.TextPlain {
-                id: header
-                anchors.left: icon.right
-                anchors.leftMargin: 16
-                anchors.top: parent.top
+                id: title
+                Layout.fillWidth: true
+                Layout.preferredHeight: 20
+                Layout.topMargin: 8
                 color: MoneroComponents.Style.defaultFontColor
                 opacity: MoneroComponents.Style.blackTheme ? 1.0 : 0.8
                 font.bold: true
@@ -73,43 +43,23 @@ ColumnLayout {
                 font.pixelSize: 16
             }
 
-            Text {
-                id: area
-                anchors.top: header.bottom
-                anchors.topMargin: 4
-                anchors.left: icon.right
-                anchors.leftMargin: 16
+            MoneroComponents.TextPlainArea {
+                id: description
                 color: MoneroComponents.Style.dimmedFontColor
-                font.family: MoneroComponents.Style.fontRegular.name
-                font.pixelSize: 15
+                colorBlackTheme: MoneroComponents.Style._b_dimmedFontColor
+                colorWhiteTheme: MoneroComponents.Style._w_dimmedFontColor
+                Layout.fillWidth: true
                 horizontalAlignment: TextInput.AlignLeft
-                wrapMode: Text.WordWrap;
-                leftPadding: 0
-                topPadding: 0
-                width: parent.width - (icon.width + icon.anchors.leftMargin + anchors.leftMargin)
             }
         }
 
-        Rectangle {
-            id: bottomDivider
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: MoneroComponents.Style.dividerColor
-            opacity: MoneroComponents.Style.dividerOpacity
-            visible: settingsListItem.isLast
-        }
-
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: root.color = MoneroComponents.Style.titleBarButtonHoverColor
-            onExited: root.color = "transparent"
+        MoneroComponents.StandardButton {
+            id: button
+            small: true
             onClicked: {
                 settingsListItem.clicked()
             }
+            width: 135
         }
     }
 }

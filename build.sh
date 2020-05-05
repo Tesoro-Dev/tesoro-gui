@@ -1,7 +1,6 @@
 #!/bin/bash
 
 BUILD_TYPE=$1
-BUILD_TREZOR=${BUILD_TREZOR-true}
 source ./utils.sh
 platform=$(get_platform)
 # default build type
@@ -64,18 +63,14 @@ fi
 source ./utils.sh
 pushd $(pwd)
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-MONERO_DIR=monero
-MONEROD_EXEC=monerod
+MONERO_DIR=tesoro
+MONEROD_EXEC=tesorod
 
 MAKE='make'
 if [[ $platform == *bsd* ]]; then
     MAKE='gmake'
 fi
 
-# build libwallet
-export BUILD_TREZOR
-./get_libwallet_api.sh $BUILD_TYPE
- 
 # build zxcvbn
 if [ "$DISABLE_PASS_STRENGTH_METER" != true ]; then
     $MAKE -C src/zxcvbn-c || exit
@@ -93,9 +88,9 @@ if [ "$ANDROID" != true ] && ([ "$platform" == "linux32" ] || [ "$platform" == "
 fi
 
 if [ "$platform" == "darwin" ]; then
-    BIN_PATH=$BIN_PATH/monero-wallet-gui.app/Contents/MacOS/
+    BIN_PATH=$BIN_PATH/tesoro-wallet-gui.app/Contents/MacOS/
 elif [ "$platform" == "mingw64" ] || [ "$platform" == "mingw32" ]; then
-    MONEROD_EXEC=monerod.exe
+    MONEROD_EXEC=tesorod.exe
 fi
 
 # force version update
@@ -111,14 +106,15 @@ if ! QMAKE=$(find_command qmake qmake-qt5); then
     echo "Failed to find suitable qmake command."
     exit 1
 fi
-$QMAKE ../monero-wallet-gui.pro "$CONFIG" || exit
+$QMAKE ../tesoro-wallet-gui.pro "$CONFIG" || exit
 $MAKE || exit 
 
 # Copy monerod to bin folder
 if [ "$platform" != "mingw32" ] && [ "$ANDROID" != true ]; then
-cp ../$MONERO_DIR/bin/$MONEROD_EXEC $BIN_PATH
+cp ../$MONERO_DIR/build/bin/$MONEROD_EXEC $BIN_PATH
 fi
 
 # make deploy
 popd
+
 

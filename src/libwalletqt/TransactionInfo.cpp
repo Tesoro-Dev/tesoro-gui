@@ -137,7 +137,7 @@ QString TransactionInfo::destinations_formatted() const
     return destinations;
 }
 
-TransactionInfo::TransactionInfo(const Monero::TransactionInfo *pimpl, QObject *parent)
+TransactionInfo::TransactionInfo(const Tesoro::TransactionInfo *pimpl, QObject *parent)
     : QObject(parent)
     , m_amount(pimpl->amount())
     , m_blockHeight(pimpl->blockHeight())

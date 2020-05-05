@@ -109,7 +109,7 @@ Rectangle {
                         hoverEnabled: true
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onEntered: parent.color = MoneroComponents.Style.orange
+                        onEntered: parent.color = MoneroComponents.Style.yellow
                         onExited: parent.color = MoneroComponents.Style.defaultFontColor
                         onClicked: {
                             console.log("Copied to clipboard");
@@ -142,7 +142,7 @@ Rectangle {
                         hoverEnabled: true
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onEntered: parent.color = MoneroComponents.Style.orange
+                        onEntered: parent.color = MoneroComponents.Style.yellow
                         onExited: parent.color = MoneroComponents.Style.defaultFontColor
                         onClicked: {
                             console.log("Copied to clipboard");

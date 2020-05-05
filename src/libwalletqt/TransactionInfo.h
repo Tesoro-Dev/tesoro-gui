@@ -61,8 +61,8 @@ class TransactionInfo : public QObject
 
 public:
     enum Direction {
-        Direction_In  =  Monero::TransactionInfo::Direction_In,
-        Direction_Out =  Monero::TransactionInfo::Direction_Out,
+        Direction_In  =  Tesoro::TransactionInfo::Direction_In,
+        Direction_Out =  Tesoro::TransactionInfo::Direction_Out,
         Direction_Both // invalid direction value, used for filtering
     };
 
@@ -91,7 +91,7 @@ public:
     //! used in tx details popup
     QString destinations_formatted() const;
 private:
-    explicit TransactionInfo(const Monero::TransactionInfo *pimpl, QObject *parent = 0);
+    explicit TransactionInfo(const Tesoro::TransactionInfo *pimpl, QObject *parent = 0);
 private:
     friend class TransactionHistory;
     mutable QList<Transfer*> m_transfers;

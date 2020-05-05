@@ -271,11 +271,11 @@ Rectangle {
     ListModel {
         id: fiatPriceCurrencyModel
         ListElement {
-            data: "xmrusd"
+            data: "tsxusd"
             column1: "USD"
         }
         ListElement {
-            data: "xmreur"
+            data: "tsxeur"
             column1: "EUR"
         }
     }
@@ -298,7 +298,7 @@ Rectangle {
         }
 
         fiatPriceProviderDropDown.update();
-        fiatPriceCurrencyDropdown.currentIndex = persistentSettings.fiatPriceCurrency === "xmrusd" ? 0 : 1;
+        fiatPriceCurrencyDropdown.currentIndex = persistentSettings.fiatPriceCurrency === "tsxusd" ? 0 : 1;
         fiatPriceCurrencyDropdown.update();
 
         console.log('SettingsLayout loaded');

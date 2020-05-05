@@ -36,8 +36,8 @@
 #include <QReadWriteLock>
 #include <QDateTime>
 
-namespace Monero {
-struct TransactionHistory;
+namespace Tesoro {
+class TransactionHistory;
 }
 
 class TransactionInfo;
@@ -72,12 +72,12 @@ public slots:
 
 
 private:
-    explicit TransactionHistory(Monero::TransactionHistory * pimpl, QObject *parent = 0);
+    explicit TransactionHistory(Tesoro::TransactionHistory * pimpl, QObject *parent = 0);
 
 private:
     friend class Wallet;
     mutable QReadWriteLock m_lock;
-    Monero::TransactionHistory * m_pimpl;
+    Tesoro::TransactionHistory * m_pimpl;
     mutable QList<TransactionInfo*> m_tinfo;
     mutable QDateTime   m_firstDateTime;
     mutable QDateTime   m_lastDateTime;

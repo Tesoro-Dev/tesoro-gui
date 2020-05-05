@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(monero-gui)
+project(tesoro-gui)
 
 message(STATUS "Initiating compile using CMake ${CMAKE_VERSION}")
 
@@ -11,10 +11,8 @@ set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}")
 # libwallet requires a static build, so we only allow static compilation
 set(STATIC ON)
 
-option(USE_DEVICE_TREZOR ON)
 option(ENABLE_PASS_STRENGTH_METER "Disable zxcvbn" OFF)
 option(WITH_SCANNER "Enable webcam QR scanner" OFF)
-option(DEV_MODE "Checkout latest monero master on build" OFF)
 
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_AUTOMOC ON)
@@ -54,30 +52,9 @@ function (add_linker_flag_if_supported flag var)
   endif()
 endfunction()
 
-find_package(Git)
-if(GIT_FOUND)
-  if(NOT DEV_MODE)
-    find_package(Git)
-    function (check_submodule relative_path)
-      execute_process(COMMAND git rev-parse "HEAD" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${relative_path} OUTPUT_VARIABLE localHead)
-      execute_process(COMMAND git rev-parse "HEAD:${relative_path}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE checkedHead)
-      string(COMPARE EQUAL "${localHead}" "${checkedHead}" upToDate)
-      if (upToDate)
-        message(STATUS "Submodule '${relative_path}' is up-to-date")
-      else()
-        message(FATAL_ERROR "Submodule '${relative_path}' is not using the checked head. Please update all submodules with\ngit submodule update --init --force\nor run cmake with -DMANUAL_SUBMODULES=1,\n or if you want to build from latest master run cmake with -DEV_MODE,\n or run make devmode")
-      endif()
-    endfunction ()
-    message(STATUS "Checking submodules")
-    check_submodule(monero)
-  else()
-    execute_process(COMMAND cd monero && git checkout origin/master)
-  endif()
-endif()
-
-add_subdirectory(monero)
-set_property(TARGET wallet_merged PROPERTY FOLDER "monero")
-get_directory_property(ARCH_WIDTH DIRECTORY "monero" DEFINITION ARCH_WIDTH)
+add_subdirectory(tesoro)
+set_property(TARGET wallet_merged PROPERTY FOLDER "tesoro")
+get_directory_property(ARCH_WIDTH DIRECTORY "tesoro" DEFINITION ARCH_WIDTH)
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_definitions(-DQT_NO_DEBUG)
@@ -98,7 +75,6 @@ else()
     add_definitions(-DDISABLE_PASS_STRENGTH_METER)
 endif()
 
-include(CheckTrezor)  # Trezor support check
 include(CMakePackageConfigHelpers)
 
 # force version update
@@ -192,23 +168,33 @@ endif()
 
 if(MINGW)
     string(REGEX MATCH "^[^/]:/[^/]*" msys2_install_path "${CMAKE_C_COMPILER}")
+    
+    if (STATIC)
+      set(qt_prefix "${msys2_install_path}/mingw${ARCH_WIDTH}/qt5-static")
+    else()
+      set(qt_prefix "${msys2_install_path}/mingw${ARCH_WIDTH}")
+    endif()
+
     message(STATUS "MSYS location: ${msys2_install_path}")
-    set(CMAKE_INCLUDE_PATH "${msys2_install_path}/mingw${ARCH_WIDTH}/include")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/Qt/labs/folderlistmodel")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/Qt/labs/settings")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtGraphicalEffects")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtGraphicalEffects/private")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtMultimedia")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick.2")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/Controls")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/Controls.2")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/Dialogs")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/Dialogs/Private")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/Layouts")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/PrivateWidgets")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/Templates.2")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/Window.2")
-    link_directories("${msys2_install_path}/mingw${ARCH_WIDTH}/qml/QtQuick/XmlListModel")
+    message(STATUS "QT Prefix: ${qt_prefix}")
+
+    set(CMAKE_INCLUDE_PATH "${qt_prefix}/include")
+    link_directories("${qt_prefix}/lib")
+    link_directories("${qt_prefix}/share/qt5/qml/Qt/labs/folderlistmodel")
+    link_directories("${qt_prefix}/share/qt5/qml/Qt/labs/settings")
+    link_directories("${qt_prefix}/share/qt5/qml/QtGraphicalEffects")
+    link_directories("${qt_prefix}/share/qt5/qml/QtGraphicalEffects/private")
+    link_directories("${qt_prefix}/share/qt5/qmlQtMultimedia")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick.2")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/Controls")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/Controls.2")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/Dialogs")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/Dialogs/Private")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/Layouts")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/PrivateWidgets")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/Templates.2")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/Window.2")
+    link_directories("${qt_prefix}/share/qt5/qml/QtQuick/XmlListModel")
     # This is necessary because otherwise CMake will make Boost libraries -lfoo
     # rather than a full path. Unfortunately, this makes the shared libraries get
     # linked due to a bug in CMake which misses putting -static flags around the
@@ -369,8 +355,8 @@ if (NOT (CMAKE_C_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_C_COMPILER_VERSION VER
 endif()
 
 # linker
-if (NOT (WIN32 AND (CMAKE_C_COMPILER_ID STREQUAL "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_LESS 9.1)))
-  # Windows binaries die on startup with PIE when compiled with GCC <9.x
+if (NOT (WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "GNU"))
+  # Windows binaries die on startup with PIE when compiled with GCC
   add_linker_flag_if_supported(-pie LD_SECURITY_FLAGS)
 endif()
 add_linker_flag_if_supported(-Wl,-z,relro LD_SECURITY_FLAGS)
@@ -384,13 +370,6 @@ if (noexecheap_SUPPORTED)
   set(LD_SECURITY_FLAGS "${LD_SECURITY_FLAGS} -Wl,-z,noexecheap")
 endif()
 
-# some windows linker bits
-if (WIN32)
-  add_linker_flag_if_supported(-Wl,--dynamicbase LD_SECURITY_FLAGS)
-  add_linker_flag_if_supported(-Wl,--nxcompat LD_SECURITY_FLAGS)
-  add_linker_flag_if_supported(-Wl,--high-entropy-va LD_SECURITY_FLAGS)
-endif()
-
 if(STATIC)
   if(MINGW)
     add_linker_flag_if_supported(-static STATIC_FLAGS)
@@ -400,17 +379,12 @@ if(STATIC)
   endif()
 endif()
 
-# With GCC 6.1.1 the compiled binary malfunctions due to aliasing. Until that
-# is fixed in the code (Issue #847), force compiler to be conservative.
-add_c_flag_if_supported(-fno-strict-aliasing C_SECURITY_FLAGS)
-add_cxx_flag_if_supported(-fno-strict-aliasing CXX_SECURITY_FLAGS)
-
 message(STATUS "Using C security hardening flags: ${C_SECURITY_FLAGS}")
 message(STATUS "Using C++ security hardening flags: ${CXX_SECURITY_FLAGS}")
 message(STATUS "Using linker security hardening flags: ${LD_SECURITY_FLAGS}")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 ${C_SECURITY_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${CXX_SECURITY_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_SECURITY_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_SECURITY_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LD_SECURITY_FLAGS} ${STATIC_FLAGS}")
 
 if (HIDAPI_FOUND OR LibUSB_COMPILE_TEST_PASSED)
@@ -432,5 +406,5 @@ endif()
 add_subdirectory(src)
 
 # Required to make wallet_merged build before the gui
-add_dependencies(monero-gui wallet_merged)
+add_dependencies(tesoro-gui wallet_merged)
 

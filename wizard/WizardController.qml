@@ -59,7 +59,6 @@ Rectangle {
         wizardController.walletOptionsLocation = '';
         wizardController.walletOptionsPassword = '';
         wizardController.walletOptionsSeed = '';
-        wizardController.walletOptionsSeedOffset = '';
         wizardController.walletOptionsRecoverAddress = ''
         wizardController.walletOptionsRecoverViewkey = ''
         wizardController.walletOptionsRecoverSpendkey = ''
@@ -93,7 +92,6 @@ Rectangle {
     property string walletOptionsLocation: ''
     property string walletOptionsPassword: ''
     property string walletOptionsSeed: ''
-    property string walletOptionsSeedOffset: ''
     property string walletOptionsRecoverAddress: ''
     property string walletOptionsRecoverViewkey: ''
     property string walletOptionsRecoverSpendkey: ''
@@ -366,6 +364,8 @@ Rectangle {
         // protecting wallet with password
         wizardController.m_wallet.setPassword(wizardController.walletOptionsPassword);
 
+        restart();
+
         // save to persistent settings
         persistentSettings.language = wizardController.language_language
         persistentSettings.locale   = wizardController.language_locale
@@ -377,8 +377,6 @@ Rectangle {
         persistentSettings.allow_background_mining = false
         persistentSettings.is_recovering = (wizardController.walletOptionsIsRecovering === undefined) ? false : wizardController.walletOptionsIsRecovering
         persistentSettings.is_recovering_from_device = (wizardController.walletOptionsIsRecoveringFromDevice === undefined) ? false : wizardController.walletOptionsIsRecoveringFromDevice
-
-        restart();
     }
 
     function recoveryWallet() {
@@ -396,7 +394,7 @@ Rectangle {
         var wallet = ''
         // From seed or keys
         if(wizardController.walletRestoreMode === 'seed')
-            wallet = walletManager.recoveryWallet(tmp_wallet_filename, wizardController.walletOptionsSeed, wizardController.walletOptionsSeedOffset, nettype, restoreHeight, kdfRounds);
+            wallet = walletManager.recoveryWallet(tmp_wallet_filename, wizardController.walletOptionsSeed, nettype, restoreHeight, kdfRounds)
         else
             wallet = walletManager.createWalletFromKeys(tmp_wallet_filename, wizardController.language_wallet, nettype,
                                                             wizardController.walletOptionsRecoverAddress, wizardController.walletOptionsRecoverViewkey,

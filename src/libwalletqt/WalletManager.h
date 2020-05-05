@@ -41,8 +41,8 @@
 #include "NetworkType.h"
 
 class Wallet;
-namespace Monero {
-struct WalletManager;
+namespace Tesoro {
+    class WalletManager;
 }
 
 class WalletManager : public QObject
@@ -52,14 +52,14 @@ class WalletManager : public QObject
 
 public:
     enum LogLevel {
-        LogLevel_Silent = Monero::WalletManagerFactory::LogLevel_Silent,
-        LogLevel_0 = Monero::WalletManagerFactory::LogLevel_0,
-        LogLevel_1 = Monero::WalletManagerFactory::LogLevel_1,
-        LogLevel_2 = Monero::WalletManagerFactory::LogLevel_2,
-        LogLevel_3 = Monero::WalletManagerFactory::LogLevel_3,
-        LogLevel_4 = Monero::WalletManagerFactory::LogLevel_4,
-        LogLevel_Min = Monero::WalletManagerFactory::LogLevel_Min,
-        LogLevel_Max = Monero::WalletManagerFactory::LogLevel_Max,
+        LogLevel_Silent = Tesoro::WalletManagerFactory::LogLevel_Silent,
+        LogLevel_0 = Tesoro::WalletManagerFactory::LogLevel_0,
+        LogLevel_1 = Tesoro::WalletManagerFactory::LogLevel_1,
+        LogLevel_2 = Tesoro::WalletManagerFactory::LogLevel_2,
+        LogLevel_3 = Tesoro::WalletManagerFactory::LogLevel_3,
+        LogLevel_4 = Tesoro::WalletManagerFactory::LogLevel_4,
+        LogLevel_Min = Tesoro::WalletManagerFactory::LogLevel_Min,
+        LogLevel_Max = Tesoro::WalletManagerFactory::LogLevel_Max,
     };
 
     static WalletManager * instance();
@@ -83,7 +83,7 @@ public:
     Q_INVOKABLE void openWalletAsync(const QString &path, const QString &password, NetworkType::Type nettype = NetworkType::MAINNET, quint64 kdfRounds = 1);
 
     // wizard: recoveryWallet path; hint: internally it recorvers wallet and set password = ""
-    Q_INVOKABLE Wallet * recoveryWallet(const QString &path, const QString &seed, const QString &seed_offset,
+    Q_INVOKABLE Wallet * recoveryWallet(const QString &path, const QString &memo,
                                        NetworkType::Type nettype = NetworkType::MAINNET, quint64 restoreHeight = 0, quint64 kdfRounds = 1);
 
     Q_INVOKABLE Wallet * createWalletFromKeys(const QString &path,
@@ -182,7 +182,7 @@ public:
     // clear/rename wallet cache
     Q_INVOKABLE bool clearWalletCache(const QString &fileName) const;
 
-    Q_INVOKABLE void onWalletPassphraseNeeded(Monero::Wallet * wallet);
+    Q_INVOKABLE void onWalletPassphraseNeeded(Tesoro::Wallet * wallet);
     Q_INVOKABLE void onPassphraseEntered(const QString &passphrase, bool entry_abort=false);
 
 signals:
@@ -205,7 +205,7 @@ private:
     bool isMining() const;
 
     static WalletManager * m_instance;
-    Monero::WalletManager * m_pimpl;
+    Tesoro::WalletManager * m_pimpl;
     mutable QMutex m_mutex;
     QPointer<Wallet> m_currentWallet;
 

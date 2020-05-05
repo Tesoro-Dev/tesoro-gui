@@ -29,14 +29,17 @@
 #include "Subaddress.h"
 #include <QDebug>
 
-Subaddress::Subaddress(Monero::Subaddress *subaddressImpl, QObject *parent)
+Subaddress::Subaddress(Tesoro::Subaddress *subaddressImpl, QObject *parent)
   : QObject(parent), m_subaddressImpl(subaddressImpl)
 {
+    qDebug(__FUNCTION__);
     getAll();
 }
 
 void Subaddress::getAll() const
 {
+    qDebug(__FUNCTION__);
+
     emit refreshStarted();
 
     {
@@ -51,7 +54,7 @@ void Subaddress::getAll() const
     emit refreshFinished();
 }
 
-bool Subaddress::getRow(int index, std::function<void (Monero::SubaddressRow &row)> callback) const
+bool Subaddress::getRow(int index, std::function<void (Tesoro::SubaddressRow &row)> callback) const
 {
     QReadLocker locker(&m_lock);
 

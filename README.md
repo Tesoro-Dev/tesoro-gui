@@ -6,15 +6,15 @@ Copyright (c) 2014-2019, The Monero Project
 
 - Web: [getmonero.org](https://getmonero.org)
 - Mail: [dev@getmonero.org](mailto:dev@getmonero.org)
-- Github: [https://github.com/monero-project/monero-gui](https://github.com/monero-project/monero-gui)
-- IRC: [#monero-dev on Freenode](irc://chat.freenode.net/#monero-dev)
+- Github: [https://github.com/tesoro-project/tesoro-gui](https://github.com/tesoro-project/tesoro-gui)
+- IRC: [#tesoro-dev on Freenode](irc://chat.freenode.net/#tesoro-dev)
 - Translation platform (Weblate): [translate.getmonero.org](https://translate.getmonero.org)
 - UI Design: [Monero-GUI on Figma](https://www.figma.com/file/DplJ2DDQfIKiuRvolHX2hN/Monero-GUI)
 
 ## Vulnerability response
 
-- Our [Vulnerability Response Process](https://github.com/monero-project/meta/blob/master/VULNERABILITY_RESPONSE_PROCESS.md) encourages responsible disclosure
-- We are also available via [HackerOne](https://hackerone.com/monero)
+- Our [Vulnerability Response Process](https://github.com/tesoro-project/meta/blob/master/VULNERABILITY_RESPONSE_PROCESS.md) encourages responsible disclosure
+- We are also available via [HackerOne](https://hackerone.com/tesoro)
 
 ## Introduction
 
@@ -28,7 +28,7 @@ Monero is a private, secure, untraceable, decentralised digital currency. You ar
 
 ## About this project
 
-This is the GUI for the [core Monero implementation](https://github.com/monero-project/monero). It is open source and completely free to use without restrictions, except for those specified in the license agreement below. There are no restrictions on anyone creating an alternative implementation of Monero that uses the protocol and network in a compatible manner.
+This is the GUI for the [core Monero implementation](https://github.com/tesoro-project/tesoro). It is open source and completely free to use without restrictions, except for those specified in the license agreement below. There are no restrictions on anyone creating an alternative implementation of Monero that uses the protocol and network in a compatible manner.
 
 As with many development projects, the repository on Github is considered to be the "staging" area for the latest changes. Before changes are merged into that branch on the main repository, they are tested by individual developers in their own branches, submitted as a pull request, and then subsequently tested by contributors who focus on testing and code reviews. That having been said, the repository should be carefully considered before using it in a production environment, unless there is a patch in the repository for a particular show-stopping issue you are experiencing. It is generally a better idea to use a tagged release for stability.
 
@@ -58,22 +58,17 @@ See [LICENSE](LICENSE).
 
 ## Translations
 
-Do you speak a second language and would like to help translate the Monero GUI? Check out Weblate, our localization platform, at [translate.getmonero.org](https://translate.getmonero.org/). Choose the language and suggest a translation for a string or review an existing one. The Localization Workgroup made [a guide with step-by-step instructions](https://github.com/monero-ecosystem/monero-translations/blob/master/weblate.md) for Weblate.
+Do you speak a second language and would like to help translate the Monero GUI? Check out Weblate, our localization platform, at [translate.getmonero.org](https://translate.getmonero.org/). Choose the language and suggest a translation for a string or review an existing one. The Localization Workgroup made [a guide with step-by-step instructions](https://github.com/tesoro-ecosystem/tesoro-translations/blob/master/weblate.md) for Weblate.
 
-If you need help/support or any info you can contact the localization workgroup on the IRC channel #monero-translations (relayed on matrix/riot and MatterMost) or by email at translate[at]getmonero[dot]org. For more info about the Localization workgroup: [github.com/monero-ecosystem/monero-translations](https://github.com/monero-ecosystem/monero-translations)
-
-Status of the translations:  
-<a href="https://translate.getmonero.org/engage/monero/?utm_source=widget">
-<img src="https://translate.getmonero.org/widgets/monero/-/gui-wallet/horizontal-auto.svg" alt="Translation status" />
-</a>
+If you need help/support or any info you can contact the localization workgroup on the IRC channel #tesoro-translations (relayed on matrix/riot and MatterMost) or by email at translate[at]getmonero[dot]org. For more info about the Localization workgroup: [github.com/tesoro-ecosystem/tesoro-translations](https://github.com/tesoro-ecosystem/tesoro-translations)
 
 ## Installing the Monero GUI from a package
 
 Packages are available for
 
-* Arch Linux: pacman -S monero-gui
-* Void Linux: xbps-install -S monero-core
-* GuixSD: guix package -i monero-core
+* Arch Linux: pacman -S tesoro-gui
+* Void Linux: xbps-install -S tesoro-core
+* GuixSD: guix package -i tesoro-core
 
 Packaging for your favorite distribution would be a welcome contribution!
 
@@ -89,7 +84,7 @@ Packaging for your favorite distribution would be a welcome contribution!
 
   - For Debian distributions (Debian, Ubuntu, Mint, Tails...)
 
-	`sudo apt install build-essential cmake libboost-all-dev miniupnpc libunbound-dev graphviz doxygen libunwind8-dev pkg-config libssl-dev libzmq3-dev libsodium-dev libhidapi-dev libnorm-dev libusb-1.0-0-dev libpgm-dev libprotobuf-dev protobuf-compiler`
+	`sudo apt install build-essential cmake libboost-all-dev miniupnpc libunbound-dev graphviz doxygen libunwind8-dev pkg-config libssl-dev libzmq3-dev libsodium-dev libhidapi-dev libnorm-dev libusb-1.0-0-dev libpgm-dev`
 
   - For Gentoo
 
@@ -109,7 +104,7 @@ The following instructions will fetch Qt from your distribution's repositories i
 
   - For Ubuntu 17.10+
 
-    `sudo apt install qtbase5-dev qt5-default qtdeclarative5-dev qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-xmllistmodel qml-module-qt-labs-settings qml-module-qt-labs-folderlistmodel qttools5-dev-tools qml-module-qtquick-templates2 libqt5svg5-dev libgcrypt20-dev`
+    `sudo apt install qtbase5-dev qt5-default qtdeclarative5-dev qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-xmllistmodel qml-module-qt-labs-settings qml-module-qt-labs-folderlistmodel qttools5-dev-tools qml-module-qtquick-templates2 libqt5svg5-dev`
 
   - For Gentoo
 
@@ -130,12 +125,12 @@ The following instructions will fetch Qt from your distribution's repositories i
 
 3. Clone repository
 
-    `git clone https://github.com/monero-project/monero-gui.git`
+    `git clone https://github.com/tesoro-project/tesoro-gui.git`
 
 4. Build
 
     ```
-    cd monero-gui
+    cd tesoro-gui
     QT_SELECT=5 ./build.sh
     ```
 
@@ -147,32 +142,59 @@ The executable can be found in the build/release/bin folder.
 
 2. Install [homebrew](http://brew.sh/)
 
-3. Install [monero](https://github.com/monero-project/monero) dependencies:
+3. Install [tesoro](https://github.com/tesoro-project/tesoro) dependencies:
 
-  `brew install boost hidapi zmq libpgm miniupnpc ldns expat libunwind-headers protobuf libgcrypt`
+  `brew install boost`
+
+  `brew install openssl` - to install openssl headers
+
+  `brew install pkgconfig`
+
+  `brew install cmake`
+
+  `brew install zeromq`
+
+  *Note*: If cmake can not find zmq.hpp file on OS X, installing `zmq.hpp` from https://github.com/zeromq/cppzmq to `/usr/local/include` should fix that error.
 
 4. Install Qt:
 
   `brew install qt5`  (or download QT 5.9.7+ from [qt.io](https://www.qt.io/download-open-source/))
+
+  If you have an older version of Qt installed via homebrew, you can force it to use 5.x like so:
+  
+  `brew link --force --overwrite qt5`
 
 5. Add the Qt bin directory to your path
 
   - Example for Qt: `export PATH=$PATH:$HOME/Qt/5.9.7/clang_64/bin`
   - Example for Homebrew: `export PATH=$PATH:/usr/local/opt/qt/bin`
 
-6. Grab an up-to-date copy of the monero-gui repository
+6. Grab an up-to-date copy of the tesoro-gui repository
 
-  `git clone https://github.com/monero-project/monero-gui.git`
+  `git clone https://github.com/tesoro-project/tesoro-gui.git`
 
 7. Go into the repository
 
-  `cd monero-gui`
+  `cd tesoro-gui`
 
 8. Start the build
 
   `./build.sh`
 
 The executable can be found in the `build/release/bin` folder.
+
+**Note:** Workaround for "ERROR: Xcode not set up properly"
+
+Edit `$HOME/Qt/5.9.7/clang_64/mkspecs/features/mac/default_pre.prf`
+
+replace
+`isEmpty($$list($$system("/usr/bin/xcrun -find xcrun 2>/dev/null")))`
+
+with
+`isEmpty($$list($$system("/usr/bin/xcrun -find xcodebuild 2>/dev/null")))`
+
+More info: http://stackoverflow.com/a/35098040/1683164
+
 
 ### On Windows:
 
@@ -185,7 +207,7 @@ The Monero GUI on Windows is 64 bits only; 32-bit Windows GUI builds are not off
 3. Install MSYS2 packages for Monero dependencies; the needed 64-bit packages have `x86_64` in their names
 
     ```
-    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-protobuf-c mingw-w64-x86_64-libusb mingw-w64-x86_64-libgcrypt
+    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-protobuf-c mingw-w64-x86_64-libusb
     ```
 
     Optional : To build the flag `WITH_SCANNER`
@@ -194,7 +216,7 @@ The Monero GUI on Windows is 64 bits only; 32-bit Windows GUI builds are not off
       pacman -S mingw-w64-x86_64-zbar
       ```
 
-    You find more details about those dependencies in the [Monero documentation](https://github.com/monero-project/monero). Note that that there is no more need to compile Boost from source; like everything else, you can install it now with a MSYS2 package.
+    You find more details about those dependencies in the [Monero documentation](https://github.com/tesoro-project/tesoro). Note that that there is no more need to compile Boost from source; like everything else, you can install it now with a MSYS2 package.
 
 4. Install Qt5
 
@@ -213,18 +235,18 @@ The Monero GUI on Windows is 64 bits only; 32-bit Windows GUI builds are not off
 6. Clone repository
 
     ```
-    git clone https://github.com/monero-project/monero-gui.git
+    git clone https://github.com/tesoro-project/tesoro-gui.git
     ```
 
 7. Build
 
     ```
-    cd monero-gui
+    cd tesoro-gui
     source ./build.sh release-static
     cd build
     make deploy
     ```
 
-    **Note:** The use of `source` above is a dirty workaround for a suspected bug in the current QT version 5.11.2-3 available in the MSYS2 packaging system, see https://github.com/monero-project/monero-gui/issues/1559 for more info.
+    **Note:** The use of `source` above is a dirty workaround for a suspected bug in the current QT version 5.11.2-3 available in the MSYS2 packaging system, see https://github.com/tesoro-project/tesoro-gui/issues/1559 for more info.
 
 The executable can be found in the `.\release\bin` directory.

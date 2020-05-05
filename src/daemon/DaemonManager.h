@@ -42,10 +42,10 @@ class DaemonManager : public QObject
 
 public:
 
-    static DaemonManager * instance(const QStringList *args = nullptr);
+    static DaemonManager * instance(const QStringList *args);
 
     Q_INVOKABLE bool start(const QString &flags, NetworkType::Type nettype, const QString &dataDir = "", const QString &bootstrapNodeAddress = "", bool noSync = false);
-    Q_INVOKABLE void stopAsync(NetworkType::Type nettype, const QJSValue& callback);
+    Q_INVOKABLE bool stop(NetworkType::Type nettype);
 
     Q_INVOKABLE bool noSync() const noexcept;
     // return true if daemon process is started
@@ -80,7 +80,7 @@ private:
     static QStringList m_clArgs;
     QProcess *m_daemon;
     bool initialized = false;
-    QString m_monerod;
+    QString m_tesorod;
     bool m_has_daemon = true;
     bool m_app_exit = false;
     bool m_noSync = false;

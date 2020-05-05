@@ -470,7 +470,7 @@ Rectangle {
                             anchors.fill: parent
                             hoverEnabled: pages > 1
                             cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onEntered: parent.color = MoneroComponents.Style.orange
+                            onEntered: parent.color = MoneroComponents.Style.yellow
                             onExited: parent.color = MoneroComponents.Style.defaultFontColor
                             onClicked: {
                                 if(pages === 1)
@@ -633,17 +633,7 @@ Rectangle {
                                 MoneroComponents.TextPlain {
                                     font.family: MoneroComponents.Style.fontRegular.name
                                     font.pixelSize: 15
-                                    text: {
-                                        if (!isout) {
-                                            return qsTr("Received") + translationManager.emptyString;
-                                        }
-                                        const addressBookName = currentWallet ? currentWallet.addressBook.getDescription(address) : null;
-                                        if (!addressBookName)
-                                        {
-                                            return qsTr("Sent") + translationManager.emptyString;
-                                        }
-                                        return addressBookName;
-                                    }
+                                    text: isout ? qsTr("Sent") : qsTr("Received") + translationManager.emptyString
                                     color: MoneroComponents.Style.historyHeaderTextColor
                                     anchors.verticalCenter: parent.verticalCenter
                                     themeTransitionBlackColor: MoneroComponents.Style._b_historyHeaderTextColor
@@ -667,7 +657,7 @@ Rectangle {
                                         state: "copyable"
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onEntered: parent.color = MoneroComponents.Style.orange
+                                        onEntered: parent.color = MoneroComponents.Style.yellow
                                         onExited: parent.color = MoneroComponents.Style.defaultFontColor
                                     }
                                 }
@@ -711,7 +701,7 @@ Rectangle {
                                     font.pixelSize: 15
                                     text: {
                                         if(!isout && confirmationsRequired === 60) return qsTr("Yes") + translationManager.emptyString;
-                                        if(fee !== "") return fee + " XMR";
+                                        if(fee !== "") return fee + " TSX";
                                         return "-";
                                     }
 
@@ -722,7 +712,7 @@ Rectangle {
                                         state: "copyable"
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onEntered: parent.color = MoneroComponents.Style.orange
+                                        onEntered: parent.color = MoneroComponents.Style.yellow
                                         onExited: parent.color = MoneroComponents.Style.defaultFontColor
                                     }
                                 }
@@ -779,7 +769,7 @@ Rectangle {
                                         state: "copyable"
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onEntered: parent.color = MoneroComponents.Style.orange
+                                        onEntered: parent.color = MoneroComponents.Style.yellow
                                         onExited: parent.color = MoneroComponents.Style.defaultFontColor
                                     }
                                 }
@@ -830,7 +820,7 @@ Rectangle {
                                         state: "copyable"
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onEntered: parent.color = MoneroComponents.Style.orange
+                                        onEntered: parent.color = MoneroComponents.Style.yellow
                                         onExited: parent.color = MoneroComponents.Style.defaultFontColor
                                     }
                                 }
@@ -888,7 +878,7 @@ Rectangle {
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         onEntered: {
-                                            parent.color = MoneroComponents.Style.orange
+                                            parent.color = MoneroComponents.Style.yellow
                                             if (persistentSettings.historyHumanDates) {
                                                 parent.text = dateTime;
                                             }
@@ -1003,7 +993,7 @@ Rectangle {
                                     state: "copyable"
                                     anchors.fill: parent
                                     hoverEnabled: true
-                                    onEntered: parent.color = MoneroComponents.Style.orange
+                                    onEntered: parent.color = MoneroComponents.Style.yellow
                                     onExited: parent.color = MoneroComponents.Style.defaultFontColor
                                 }
                             }
@@ -1070,7 +1060,7 @@ Rectangle {
                                     state: "copyable"
                                     anchors.fill: parent
                                     hoverEnabled: true
-                                    onEntered: parent.color = MoneroComponents.Style.orange
+                                    onEntered: parent.color = MoneroComponents.Style.yellow
                                     onExited: parent.color = MoneroComponents.Style.defaultFontColor
                                 }
                             }
@@ -1115,7 +1105,7 @@ Rectangle {
                                     state: "copyable_txkey"
                                     anchors.fill: parent
                                     hoverEnabled: true
-                                    onEntered: parent.color = MoneroComponents.Style.orange
+                                    onEntered: parent.color = MoneroComponents.Style.yellow
                                     onExited: parent.color = MoneroComponents.Style.defaultFontColor
                                 }
                             }
@@ -1171,7 +1161,7 @@ Rectangle {
                                     state: "copyable_address"
                                     anchors.fill: parent
                                     hoverEnabled: true
-                                    onEntered: parent.color = MoneroComponents.Style.orange
+                                    onEntered: parent.color = MoneroComponents.Style.yellow
                                     onExited: parent.color = MoneroComponents.Style.defaultFontColor
                                 }
                             }
@@ -1511,7 +1501,7 @@ Rectangle {
                 "i": i,
                 "isout": isout,
                 "amount": Number(amount),
-                "displayAmount": displayAmount + " XMR",
+                "displayAmount": displayAmount + " TSX",
                 "hash": hash,
                 "paymentId": paymentId,
                 "address": address,

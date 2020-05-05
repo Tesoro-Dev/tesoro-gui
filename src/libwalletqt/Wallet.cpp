@@ -59,7 +59,7 @@ namespace {
     static constexpr char ATTRIBUTE_SUBADDRESS_ACCOUNT[] ="gui.subaddress_account";
 }
 
-class WalletListenerImpl : public  Monero::WalletListener
+class WalletListenerImpl : public  Tesoro::WalletListener
 {
 public:
     WalletListenerImpl(Wallet * w)
@@ -68,38 +68,38 @@ public:
 
     }
 
-    virtual void moneySpent(const std::string &txId, uint64_t amount) override
+    virtual void moneySpent(const std::string &txId, uint64_t amount)
     {
         qDebug() << __FUNCTION__;
         emit m_wallet->moneySpent(QString::fromStdString(txId), amount);
     }
 
 
-    virtual void moneyReceived(const std::string &txId, uint64_t amount) override
+    virtual void moneyReceived(const std::string &txId, uint64_t amount)
     {
         qDebug() << __FUNCTION__;
         emit m_wallet->moneyReceived(QString::fromStdString(txId), amount);
     }
 
-    virtual void unconfirmedMoneyReceived(const std::string &txId, uint64_t amount) override
+    virtual void unconfirmedMoneyReceived(const std::string &txId, uint64_t amount)
     {
         qDebug() << __FUNCTION__;
         emit m_wallet->unconfirmedMoneyReceived(QString::fromStdString(txId), amount);
     }
 
-    virtual void newBlock(uint64_t height) override
+    virtual void newBlock(uint64_t height)
     {
         // qDebug() << __FUNCTION__;
         emit m_wallet->newBlock(height, m_wallet->daemonBlockChainTargetHeight());
     }
 
-    virtual void updated() override
+    virtual void updated()
     {
         emit m_wallet->updated();
     }
 
     // called when wallet refreshed by background thread or explicitly
-    virtual void refreshed() override
+    virtual void refreshed()
     {
         qDebug() << __FUNCTION__;
         emit m_wallet->refreshed();
@@ -282,12 +282,12 @@ void Wallet::initAsync(const QString &daemonAddress, bool trustedDaemon, quint64
 
 bool Wallet::isHwBacked() const
 {
-    return m_walletImpl->getDeviceType() != Monero::Wallet::Device_Software;
+    return m_walletImpl->getDeviceType() != Tesoro::Wallet::Device_Software;
 }
 
 bool Wallet::isLedger() const
 {
-    return m_walletImpl->getDeviceType() == Monero::Wallet::Device_Ledger;
+    return m_walletImpl->getDeviceType() == Tesoro::Wallet::Device_Ledger;
 }
 
 //! create a view only wallet
@@ -511,9 +511,9 @@ PendingTransaction *Wallet::createTransaction(const QString &dst_addr, const QSt
                                               PendingTransaction::Priority priority)
 {
     std::set<uint32_t> subaddr_indices;
-    Monero::PendingTransaction * ptImpl = m_walletImpl->createTransaction(
+    Tesoro::PendingTransaction * ptImpl = m_walletImpl->createTransaction(
                 dst_addr.toStdString(), payment_id.toStdString(), amount, mixin_count,
-                static_cast<Monero::PendingTransaction::Priority>(priority), currentSubaddressAccount(), subaddr_indices);
+                static_cast<Tesoro::PendingTransaction::Priority>(priority), currentSubaddressAccount(), subaddr_indices);
     PendingTransaction * result = new PendingTransaction(ptImpl,0);
     return result;
 }
@@ -532,9 +532,9 @@ PendingTransaction *Wallet::createTransactionAll(const QString &dst_addr, const 
                                                  quint32 mixin_count, PendingTransaction::Priority priority)
 {
     std::set<uint32_t> subaddr_indices;
-    Monero::PendingTransaction * ptImpl = m_walletImpl->createTransaction(
-                dst_addr.toStdString(), payment_id.toStdString(), Monero::optional<uint64_t>(), mixin_count,
-                static_cast<Monero::PendingTransaction::Priority>(priority), currentSubaddressAccount(), subaddr_indices);
+    Tesoro::PendingTransaction * ptImpl = m_walletImpl->createTransaction(
+                dst_addr.toStdString(), payment_id.toStdString(), Tesoro::optional<uint64_t>(), mixin_count,
+                static_cast<Tesoro::PendingTransaction::Priority>(priority), currentSubaddressAccount(), subaddr_indices);
     PendingTransaction * result = new PendingTransaction(ptImpl, this);
     return result;
 }
@@ -551,7 +551,7 @@ void Wallet::createTransactionAllAsync(const QString &dst_addr, const QString &p
 
 PendingTransaction *Wallet::createSweepUnmixableTransaction()
 {
-    Monero::PendingTransaction * ptImpl = m_walletImpl->createSweepUnmixableTransaction();
+    Tesoro::PendingTransaction * ptImpl = m_walletImpl->createSweepUnmixableTransaction();
     PendingTransaction * result = new PendingTransaction(ptImpl, this);
     return result;
 }
@@ -567,7 +567,7 @@ void Wallet::createSweepUnmixableTransactionAsync()
 UnsignedTransaction * Wallet::loadTxFile(const QString &fileName)
 {
     qDebug() << "Trying to sign " << fileName;
-    Monero::UnsignedTransaction * ptImpl = m_walletImpl->loadUnsignedTx(fileName.toStdString());
+    Tesoro::UnsignedTransaction * ptImpl = m_walletImpl->loadUnsignedTx(fileName.toStdString());
     UnsignedTransaction * result = new UnsignedTransaction(ptImpl, m_walletImpl, this);
     return result;
 }
@@ -598,19 +598,6 @@ void Wallet::disposeTransaction(PendingTransaction *t)
 void Wallet::disposeTransaction(UnsignedTransaction *t)
 {
     delete t;
-}
-
-void Wallet::estimateTransactionFeeAsync(const QString &destination,
-                                         quint64 amount,
-                                         PendingTransaction::Priority priority,
-                                         const QJSValue &callback)
-{
-    m_scheduler.run([this, destination, amount, priority] {
-        const uint64_t fee = m_walletImpl->estimateTransactionFee(
-            {std::make_pair(destination.toStdString(), amount)},
-            static_cast<Monero::PendingTransaction::Priority>(priority));
-        return QJSValueList({QString::fromStdString(Monero::Wallet::displayAmount(fee))});
-    }, callback);
 }
 
 TransactionHistory *Wallet::history() const
@@ -678,7 +665,7 @@ SubaddressAccountModel *Wallet::subaddressAccountModel() const
 
 QString Wallet::generatePaymentId() const
 {
-    return QString::fromStdString(Monero::Wallet::genPaymentId());
+    return QString::fromStdString(Tesoro::Wallet::genPaymentId());
 }
 
 QString Wallet::integratedAddress(const QString &paymentId) const
@@ -805,7 +792,7 @@ QString Wallet::signMessage(const QString &message, bool filename) const
         file.close();
         return "";
       }
-      std::string signature = m_walletImpl->signMessage(std::string(reinterpret_cast<const char*>(data), size));
+      std::string signature = m_walletImpl->signMessage(std::string((const char*)data, size));
       file.unmap(data);
       file.close();
       return QString::fromStdString(signature);
@@ -841,7 +828,7 @@ bool Wallet::verifySignedMessage(const QString &message, const QString &address,
         file.close();
         return false;
       }
-      bool ret = m_walletImpl->verifySignedMessage(std::string(reinterpret_cast<const char*>(data), size), address.toStdString(), signature.toStdString());
+      bool ret = m_walletImpl->verifySignedMessage(std::string((const char*)data, size), address.toStdString(), signature.toStdString());
       file.unmap(data);
       file.close();
       return ret;
@@ -1012,7 +999,7 @@ void Wallet::keyReuseMitigation2(bool mitigation)
     m_walletImpl->keyReuseMitigation2(mitigation);
 }
 
-Wallet::Wallet(Monero::Wallet *w, QObject *parent)
+Wallet::Wallet(Tesoro::Wallet *w, QObject *parent)
     : QObject(parent)
     , m_walletImpl(w)
     , m_history(nullptr)
@@ -1041,9 +1028,9 @@ Wallet::Wallet(Monero::Wallet *w, QObject *parent)
     m_walletImpl->setListener(m_walletListener);
     m_currentSubaddressAccount = getCacheAttribute(ATTRIBUTE_SUBADDRESS_ACCOUNT).toUInt();
     // start cache timers
-    m_connectionStatusTime.start();
-    m_daemonBlockChainHeightTime.start();
-    m_daemonBlockChainTargetHeightTime.start();
+    m_connectionStatusTime.restart();
+    m_daemonBlockChainHeightTime.restart();
+    m_daemonBlockChainTargetHeightTime.restart();
     m_initialized = false;
     m_connectionStatusRunning = false;
     m_daemonUsername = "";
@@ -1067,7 +1054,7 @@ Wallet::~Wallet()
     m_subaddress = NULL;
     delete m_subaddressAccount;
     m_subaddressAccount = NULL;
-    //Monero::WalletManagerFactory::getWalletManager()->closeWallet(m_walletImpl);
+    //Tesoro::WalletManagerFactory::getWalletManager()->closeWallet(m_walletImpl);
     if(status() == Status_Critical)
         qDebug("Not storing wallet cache");
     else if( m_walletImpl->store(""))

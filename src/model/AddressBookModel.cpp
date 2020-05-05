@@ -35,15 +35,18 @@
 AddressBookModel::AddressBookModel(QObject *parent, AddressBook *addressBook)
     : QAbstractListModel(parent) , m_addressBook(addressBook)
 {
+    qDebug(__FUNCTION__);
     connect(m_addressBook,SIGNAL(refreshStarted()),this,SLOT(startReset()));
     connect(m_addressBook,SIGNAL(refreshFinished()),this,SLOT(endReset()));
 
 }
 
 void AddressBookModel::startReset(){
+    qDebug(__FUNCTION__);
     beginResetModel();
 }
 void AddressBookModel::endReset(){
+    qDebug(__FUNCTION__);
     endResetModel();
 }
 
@@ -56,7 +59,7 @@ QVariant AddressBookModel::data(const QModelIndex &index, int role) const
 {
     QVariant result;
 
-    bool found = m_addressBook->getRow(index.row(), [&result, &role](const Monero::AddressBookRow &row) {
+    bool found = m_addressBook->getRow(index.row(), [&result, &role](const Tesoro::AddressBookRow &row) {
         switch (role) {
         case AddressBookAddressRole:
             result = QString::fromStdString(row.getAddress());
@@ -71,8 +74,6 @@ QVariant AddressBookModel::data(const QModelIndex &index, int role) const
             // Qt doesnt support size_t overload type casting
             result.setValue(row.getRowId());
             break;
-        default:
-            qCritical() << "Unimplemented role " << role;
         }
     });
     if (!found) {

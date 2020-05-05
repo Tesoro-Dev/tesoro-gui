@@ -5,14 +5,10 @@
         <file>MiddlePanel.qml</file>
         <file>components/Label.qml</file>
         <file>components/SettingsListItem.qml</file>
-        <file>components/UpdateDialog.qml</file>
         <file>images/whatIsIcon.png</file>
         <file>images/whatIsIcon@2x.png</file>
         <file>images/lockIcon.png</file>
         <file>components/MenuButton.qml</file>
-        <file>monero/utils/gpg_keys/binaryfate.asc</file>
-        <file>monero/utils/gpg_keys/fluffypony.asc</file>
-        <file>monero/utils/gpg_keys/luigi1111.asc</file>
         <file>pages/Account.qml</file>
         <file>pages/Transfer.qml</file>
         <file>pages/History.qml</file>
@@ -89,7 +85,6 @@
         <file>lang/flags/gb.png</file>
         <file>lang/flags/us.png</file>
         <file>lang/flags/pirate.png</file>
-        <file>lang/flags/nb_NO.png</file>
         <file>pages/Receive.qml</file>
         <file>pages/TxKey.qml</file>
         <file>pages/SharedRingDB.qml</file>
@@ -104,6 +99,7 @@
         <file>components/DaemonManagerDialog.qml</file>
         <file>version.js</file>
         <file>components/QRCodeScanner.qml</file>
+        <file>components/Notifier.qml</file>
         <file>components/TextBlock.qml</file>
         <file>components/RemoteNodeEdit.qml</file>
         <file>pages/Keys.qml</file>

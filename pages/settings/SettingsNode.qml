@@ -227,7 +227,7 @@ Rectangle{
                     wrapMode: Text.WordWrap;
                     leftPadding: 0
                     topPadding: 0
-                    text: qsTr("Uses a third-party server to connect to the Monero network. Less secure, but easier on your computer.") + translationManager.emptyString
+                    text: qsTr("Uses a third-party server to connect to the Tesoro network. Less secure, but easier on your computer.") + translationManager.emptyString
                     width: parent.width - (remoteNodeIcon.width + remoteNodeIcon.anchors.leftMargin + anchors.leftMargin)
 
                     // @TODO: Legacy. Remove after Qt 5.8.
@@ -271,7 +271,7 @@ Rectangle{
             MoneroComponents.WarningBox {
                 Layout.topMargin: 26
                 Layout.bottomMargin: 6
-                text: qsTr("To find a remote node, type 'Monero remote node' into your favorite search engine. Please ensure the node is run by a trusted third-party.") + translationManager.emptyString
+                text: qsTr("To find a remote node, type 'Tesoro remote node' into your favorite search engine. Please ensure the node is run by a trusted third-party.") + translationManager.emptyString
             }
 
             MoneroComponents.RemoteNodeEdit {
@@ -381,13 +381,15 @@ Rectangle{
                     fontSize: 15
                     labelFontSize: 14
                     property string style: "<style type='text/css'>a {cursor:pointer;text-decoration: none; color: #FF6C3C}</style>"
-                    labelText: qsTr("Blockchain location") + style + " <a href='#'> (%1)</a>".arg(qsTr("Change")) + translationManager.emptyString
-                    labelButtonText: qsTr("Reset") + translationManager.emptyString
-                    labelButtonVisible: text
+                    labelText: qsTr("Blockchain location") + style + qsTr(" <a href='#'> (change)</a>") + translationManager.emptyString
                     placeholderText: qsTr("(default)") + translationManager.emptyString
                     placeholderFontSize: 15
                     readOnly: true
-                    text: persistentSettings.blockchainDataDir
+                    text: {
+                        if(persistentSettings.blockchainDataDir.length > 0){
+                            return persistentSettings.blockchainDataDir;
+                        } else { return "" }
+                    }
                     addressValidation: false
                     onInputLabelLinkActivated: {
                         //mouse.accepted = false
@@ -397,7 +399,6 @@ Rectangle{
                         blockchainFileDialog.open();
                         blockchainFolder.focus = true;
                     }
-                    onLabelButtonClicked: persistentSettings.blockchainDataDir = ""
                 }
             }
 

@@ -48,7 +48,7 @@ import "js/Windows.js" as Windows
 
 ApplicationWindow {
     id: appWindow
-    title: "Monero" + (walletName ? " - " + walletName : "")
+    title: "Tesoro" + (walletName ? " - " + walletName : "")
     minimumWidth: 750
     minimumHeight: 450
 
@@ -89,22 +89,14 @@ ApplicationWindow {
     property bool themeTransition: false
 
     // fiat price conversion
-    property real fiatPriceXMRUSD: 0
-    property real fiatPriceXMREUR: 0
+    property real fiatPriceTSXUSD: 0
+    property real fiatPriceTSXEUR: 0
     property var fiatPriceAPIs: {
         return {
-            "kraken": {
-                "xmrusd": "https://api.kraken.com/0/public/Ticker?pair=XMRUSD",
-                "xmreur": "https://api.kraken.com/0/public/Ticker?pair=XMREUR"
-            },
             "coingecko": {
-                "xmrusd": "https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=usd",
-                "xmreur": "https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=eur"
+                "tsxusd": "https://api.coingecko.com/api/v3/simple/price?ids=tesoro&vs_currencies=usd",
+                "tsxeur": "https://api.coingecko.com/api/v3/simple/price?ids=tesoro&vs_currencies=eur"
             },
-            "cryptocompare": {
-                "xmrusd": "https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=USD",
-                "xmreur": "https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=EUR",
-            }
         }
     }
 
@@ -432,8 +424,8 @@ ApplicationWindow {
     }
 
     function onUriHandler(uri){
-        if(uri.startsWith("monero://")){
-            var address = uri.substring("monero://".length);
+        if(uri.startsWith("tesoro://")){
+            var address = uri.substring("tesoro://".length);
 
             var params = {}
             if(address.length === 0) return;
@@ -559,16 +551,18 @@ ApplicationWindow {
     }
 
     function onWalletPassphraseNeeded(){
+        if(rootItem.state !== "normal") return;
+
         hideProcessingSplash();
 
         console.log(">>> wallet passphrase needed: ")
         passwordDialog.onAcceptedPassphraseCallback = function() {
             walletManager.onPassphraseEntered(passwordDialog.password);
-            appWindow.onWalletOpening();
+            this.onWalletOpening();
         }
         passwordDialog.onRejectedPassphraseCallback = function() {
             walletManager.onPassphraseEntered("", true);
-            appWindow.onWalletOpening();
+            this.onWalletOpening();
         }
         passwordDialog.openPassphraseDialog()
     }
@@ -673,16 +667,12 @@ ApplicationWindow {
 
         appWindow.showProcessingSplash(qsTr("Waiting for daemon to start..."))
         const noSync = appWindow.walletMode === 0;
-        const bootstrapNodeAddress = persistentSettings.walletMode < 2 ? "auto" : persistentSettings.bootstrapNodeAddress
-        daemonManager.start(flags, persistentSettings.nettype, persistentSettings.blockchainDataDir, bootstrapNodeAddress, noSync);
+        daemonManager.start(flags, persistentSettings.nettype, persistentSettings.blockchainDataDir, persistentSettings.bootstrapNodeAddress, noSync);
     }
 
-    function stopDaemon(callback){
+    function stopDaemon(){
         appWindow.showProcessingSplash(qsTr("Waiting for daemon to stop..."))
-        daemonManager.stopAsync(persistentSettings.nettype, function(result) {
-            hideProcessingSplash();
-            callback(result);
-        });
+        daemonManager.stop(persistentSettings.nettype);
     }
 
     function onDaemonStarted(){
@@ -696,6 +686,8 @@ ApplicationWindow {
         simpleModeConnectionTimer.start();
     }
     function onDaemonStopped(){
+        console.log("daemon stopped");
+        hideProcessingSplash();
         currentWallet.connected(true);
     }
 
@@ -748,7 +740,7 @@ ApplicationWindow {
 
     function onWalletMoneySent(txId, amount) {
         // refresh transaction history here
-        console.log("monero sent found")
+        console.log("tesoro sent found")
         currentWallet.history.refresh(currentWallet.currentSubaddressAccount); // this will refresh model
 
         if(middlePanel.state == "History")
@@ -834,10 +826,10 @@ ApplicationWindow {
 
         // validate amount;
         if (amount !== "(all)") {
-            var amountxmr = walletManager.amountFromString(amount);
-            console.log("integer amount: ", amountxmr);
+            var amounttsx = walletManager.amountFromString(amount);
+            console.log("integer amount: ", amounttsx);
             console.log("integer unlocked", currentWallet.unlockedBalance())
-            if (amountxmr <= 0) {
+            if (amounttsx <= 0) {
                 hideProcessingSplash()
                 informationPopup.title = qsTr("Error") + translationManager.emptyString;
                 informationPopup.text  = qsTr("Amount is wrong: expected number from %1 to %2")
@@ -849,7 +841,7 @@ ApplicationWindow {
                 informationPopup.onCloseCallback = null
                 informationPopup.open()
                 return;
-            } else if (amountxmr > currentWallet.unlockedBalance()) {
+            } else if (amounttsx > currentWallet.unlockedBalance()) {
                 hideProcessingSplash()
                 informationPopup.title = qsTr("Error") + translationManager.emptyString;
                 informationPopup.text  = qsTr("Insufficient funds. Unlocked balance: %1")
@@ -866,7 +858,7 @@ ApplicationWindow {
         if (amount === "(all)")
             currentWallet.createTransactionAllAsync(address, paymentId, mixinCount, priority);
         else
-            currentWallet.createTransactionAsync(address, paymentId, amountxmr, mixinCount, priority);
+            currentWallet.createTransactionAsync(address, paymentId, amounttsx, mixinCount, priority);
     }
 
     //Choose where to save transaction
@@ -961,7 +953,7 @@ ApplicationWindow {
                     txid_text += ", "
                 txid_text += txid[i]
             }
-            informationPopup.text  = (viewOnly)? qsTr("Transaction saved to file: %1").arg(path) : qsTr("Monero sent successfully: %1 transaction(s) ").arg(txid.length) + txid_text + translationManager.emptyString
+            informationPopup.text  = (viewOnly)? qsTr("Transaction saved to file: %1").arg(path) : qsTr("Tesoro sent successfully: %1 transaction(s) ").arg(txid.length) + txid_text + translationManager.emptyString
             informationPopup.icon  = StandardIcon.Information
             if (transactionDescription.length > 0) {
                 for (var i = 0; i < txid.length; ++i)
@@ -1041,10 +1033,10 @@ ApplicationWindow {
                 informationPopup.icon = StandardIcon.Critical;
             } else if (received > 0) {
                 if (in_pool) {
-                    informationPopup.text = qsTr("This address received %1 monero, but the transaction is not yet mined").arg(walletManager.displayAmount(received));
+                    informationPopup.text = qsTr("This address received %1 tesoro, but the transaction is not yet mined").arg(walletManager.displayAmount(received));
                 }
                 else {
-                    informationPopup.text = qsTr("This address received %1 monero, with %2 confirmation(s).").arg(walletManager.displayAmount(received)).arg(confirmations);
+                    informationPopup.text = qsTr("This address received %1 tesoro, with %2 confirmation(s).").arg(walletManager.displayAmount(received)).arg(confirmations);
                 }
             }
             else {
@@ -1135,35 +1127,25 @@ ApplicationWindow {
         triggeredOnStart: false
     }
 
-    function fiatApiParseTicker(url, resp, currency){
+    function fiatApiParseTicker(resp, currency){
         // parse & validate incoming JSON
-        if(url.startsWith("https://api.kraken.com/0/")){
-            if(resp.hasOwnProperty("error") && resp.error.length > 0 || !resp.hasOwnProperty("result")){
-                appWindow.fiatApiError("Kraken API has error(s)");
-                return;
-            }
-
-            var key = currency === "xmreur" ? "XXMRZEUR" : "XXMRZUSD";
-            var ticker = resp.result[key]["o"];
-            return ticker;
-        } else if(url.startsWith("https://api.coingecko.com/api/v3/")){
-            var key = currency === "xmreur" ? "eur" : "usd";
-            if(!resp.hasOwnProperty("monero") || !resp["monero"].hasOwnProperty(key)){
+        if(resp._url.startsWith("https://api.coingecko.com/api/v3/")){
+            var key = currency === "tsxeur" ? "eur" : "usd";
+            if(!resp.hasOwnProperty("tesoro") || !resp["tesoro"].hasOwnProperty(key)){
                 appWindow.fiatApiError("Coingecko API has error(s)");
                 return;
             }
-            return resp["monero"][key];
-        } else if(url.startsWith("https://min-api.cryptocompare.com/data/")){
-            var key = currency === "xmreur" ? "EUR" : "USD";
-            if(!resp.hasOwnProperty(key)){
-                appWindow.fiatApiError("cryptocompare API has error(s)");
-                return;
-            }
-            return resp[key];
+            return resp["tesoro"][key];
         }
     }
 
-    function fiatApiGetCurrency(url) {
+    function fiatApiGetCurrency(resp){
+        // map response to `appWindow.fiatPriceAPIs` object
+        if (!resp.hasOwnProperty('_url')){
+            appWindow.fiatApiError("invalid JSON");
+            return;
+        }
+
         var apis = appWindow.fiatPriceAPIs;
         for (var api in apis){
             if (!apis.hasOwnProperty(api))
@@ -1173,43 +1155,32 @@ ApplicationWindow {
                 if(!apis[api].hasOwnProperty(cur))
                     continue;
 
-                if (apis[api][cur] === url) {
+                var url = apis[api][cur];
+                if(url === resp._url){
                     return cur;
                 }
             }
         }
     }
 
-    function fiatApiJsonReceived(url, resp, error) {
-        if (error) {
-            appWindow.fiatApiError(error);
-            return;
-        }
-
-        try {
-            resp = JSON.parse(resp);
-        } catch (e) {
-            appWindow.fiatApiError("bad JSON: " + e);
-            return;
-        }
-
+    function fiatApiJsonReceived(resp){
         // handle incoming JSON, set ticker
-        var currency = appWindow.fiatApiGetCurrency(url);
+        var currency = appWindow.fiatApiGetCurrency(resp);
         if(typeof currency == "undefined"){
             appWindow.fiatApiError("could not get currency");
             return;
         }
 
-        var ticker = appWindow.fiatApiParseTicker(url, resp, currency);
+        var ticker = appWindow.fiatApiParseTicker(resp, currency);
         if(ticker <= 0){
             appWindow.fiatApiError("could not get ticker");
             return;
         }
 
-        if(persistentSettings.fiatPriceCurrency === "xmrusd")
-            appWindow.fiatPriceXMRUSD = ticker;
-        else if(persistentSettings.fiatPriceCurrency === "xmreur")
-            appWindow.fiatPriceXMREUR = ticker;
+        if(persistentSettings.fiatPriceCurrency === "tsxusd")
+            appWindow.fiatPriceTSXUSD = ticker;
+        else if(persistentSettings.fiatPriceCurrency === "tsxeur")
+            appWindow.fiatPriceTSXEUR = ticker;
 
         appWindow.updateBalance();
     }
@@ -1232,14 +1203,14 @@ ApplicationWindow {
         }
 
         var url = provider[userCurrency];
-        Network.getJSON(url, fiatApiJsonReceived);
+        Prices.getJSON(url);
     }
 
     function fiatApiCurrencySymbol() {
         switch (persistentSettings.fiatPriceCurrency) {
-            case "xmrusd":
+            case "tsxusd":
                 return "USD";
-            case "xmreur":
+            case "tsxeur":
                 return "EUR";
             default:
                 console.error("unsupported currency", persistentSettings.fiatPriceCurrency);
@@ -1248,7 +1219,7 @@ ApplicationWindow {
     }
 
     function fiatApiConvertToFiat(amount) {
-        var ticker = persistentSettings.fiatPriceCurrency === "xmrusd" ? appWindow.fiatPriceXMRUSD : appWindow.fiatPriceXMREUR;
+        var ticker = persistentSettings.fiatPriceCurrency === "tsxusd" ? appWindow.fiatPriceTSXUSD : appWindow.fiatPriceTSXEUR;
         if(ticker <= 0){
             console.log(fiatApiError("Invalid ticker value: " + ticker));
             return "?.??";
@@ -1290,6 +1261,7 @@ ApplicationWindow {
         walletManager.checkUpdatesComplete.connect(onWalletCheckUpdatesComplete);
         walletManager.walletPassphraseNeeded.connect(onWalletPassphraseNeeded);
         IPC.uriHandler.connect(onUriHandler);
+        Prices.priceJsonReceived.connect(appWindow.fiatApiJsonReceived);
 
         if(typeof daemonManager != "undefined") {
             daemonManager.daemonStarted.connect(onDaemonStarted);
@@ -1333,7 +1305,7 @@ ApplicationWindow {
         id: persistentSettings
         fileName: {
             if(isTails && tailsUsePersistence)
-                return homePath + "/Persistent/Monero/monero-core.conf";
+                return homePath + "/Persistent/Tesoro/tesoro-core.conf";
             return "";
         }
 
@@ -1374,8 +1346,8 @@ ApplicationWindow {
 
         property bool fiatPriceEnabled: false
         property bool fiatPriceToggle: false
-        property string fiatPriceProvider: "kraken"
-        property string fiatPriceCurrency: "xmrusd"
+        property string fiatPriceProvider: "coingecko"
+        property string fiatPriceCurrency: "tsxusd"
 
         Component.onCompleted: {
             MoneroComponents.Style.blackTheme = persistentSettings.blackTheme
@@ -1434,14 +1406,6 @@ ApplicationWindow {
             if (onRejectedCallback)
                 onRejectedCallback();
         }
-    }
-
-    MoneroComponents.UpdateDialog {
-        id: updateDialog
-
-        allowed: !passwordDialog.visible && !inputDialog.visible && !splash.visible
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
     }
 
     // Choose blockchain folder
@@ -1699,7 +1663,7 @@ ApplicationWindow {
             anchors.fill: blurredArea
             source: blurredArea
             radius: 64
-            visible: passwordDialog.visible || inputDialog.visible || splash.visible || updateDialog.visible
+            visible: passwordDialog.visible || inputDialog.visible || splash.visible
         }
 
 
@@ -1805,6 +1769,11 @@ ApplicationWindow {
                 font.pixelSize: 12
                 color: "#FFFFFF"
             }
+        }
+
+        Notifier {
+            visible:false
+            id: notifier
         }
     }
 
@@ -1934,7 +1903,8 @@ ApplicationWindow {
             onClose();
         }
         confirmationDialog.onRejectedCallback = function() {
-            stopDaemon(onClose);
+            daemonManager.stop(persistentSettings.nettype);
+            onClose();
         };
         confirmationDialog.open();
     }
@@ -1961,7 +1931,8 @@ ApplicationWindow {
         // If daemon is running - prompt user before exiting
         if(typeof daemonManager != "undefined" && daemonRunning) {
             if (appWindow.walletMode == 0) {
-                stopDaemon(closeAccepted);
+                stopDaemon();
+                closeAccepted();
             } else {
                 showDaemonIsRunningDialog(closeAccepted);
             }
@@ -1984,14 +1955,23 @@ ApplicationWindow {
         print("Update found: " + update)
         var parts = update.split("|")
         if (parts.length == 4) {
-            updateDialog.show(parts[0], isMac || isWindows || isLinux ? parts[3] : "");
+            var version = parts[0]
+            var hash = parts[1]
+            var user_url = parts[2]
+            var msg = ""
+            if (isMac || isWindows || isLinux) {
+                msg = qsTr("New version of Tesoro v%1 is available.<br><br>Download:<br>%2<br><br>SHA256 Hash:<br>%3").arg(version).arg(user_url).arg(hash) + translationManager.emptyString
+            } else {
+                msg = qsTr("New version of Tesoro v%1 is available. Check out getmonero.org").arg(version) + translationManager.emptyString
+            }
+            notifier.show(msg)
         } else {
             print("Failed to parse update spec")
         }
     }
 
     function checkUpdates() {
-        walletManager.checkUpdatesAsync("monero-gui", "gui")
+        walletManager.checkUpdatesAsync("tesoro-gui", "gui")
     }
 
     Timer {
@@ -2057,11 +2037,11 @@ ApplicationWindow {
     function getDefaultDaemonRpcPort(networkType) {
         switch (networkType) {
             case NetworkType.STAGENET:
-                return 38081;
+                return 33332;
             case NetworkType.TESTNET:
-                return 28081;
+                return 44442;
             default:
-                return 18081;
+                return 55552;
         }
     }
 
@@ -2075,6 +2055,7 @@ ApplicationWindow {
     function applyWalletMode(mode){
         if (mode < 2) {
             persistentSettings.useRemoteNode = false;
+            persistentSettings.bootstrapNodeAddress = "auto";
 
             if (middlePanel.settingsView.settingsStateViewState === "Node" || middlePanel.settingsView.settingsStateViewState === "Log") {
                 middlePanel.settingsView.settingsStateViewState = "Wallet"
@@ -2095,11 +2076,6 @@ ApplicationWindow {
             targetObj: parent
             blackColor: "black"
             whiteColor: "white"
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
         }
     }
 

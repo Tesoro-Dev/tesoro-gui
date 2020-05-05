@@ -37,9 +37,9 @@ class NetworkType : public QObject
 
 public:
     enum Type : uint8_t {
-        MAINNET = Monero::MAINNET,
-        TESTNET = Monero::TESTNET,
-        STAGENET = Monero::STAGENET
+        MAINNET = Tesoro::MAINNET,
+        TESTNET = Tesoro::TESTNET,
+        STAGENET = Tesoro::STAGENET
     };
     Q_ENUM(Type)
 };

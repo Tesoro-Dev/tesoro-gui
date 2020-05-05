@@ -97,7 +97,7 @@ Rectangle {
                 wrapMode: Text.WordWrap;
                 leftPadding: 0
                 topPadding: 0
-                text: qsTr("This makes it easier to send or receive Monero and reduces errors when typing in addresses manually.") + translationManager.emptyString
+                text: qsTr("This makes it easier to send or receive Tesoro and reduces errors when typing in addresses manually.") + translationManager.emptyString
                 width: parent.width
 
                 // @TODO: Legacy. Remove after Qt 5.8.
@@ -306,8 +306,8 @@ Rectangle {
             MoneroComponents.LineEditMulti {
                 id: addressLine
                 Layout.topMargin: 20
-                labelText: "<style type='text/css'>a {text-decoration: none; color: #858585; font-size: 14px;}</style> %1"
-                    .arg(qsTr("Address")) + translationManager.emptyString
+                labelText: qsTr("<style type='text/css'>a {text-decoration: none; color: #858585; font-size: 14px;}</style>\
+                                 Address") + translationManager.emptyString
                 placeholderText: {
                     if(persistentSettings.nettype == NetworkType.MAINNET){
                         return "4.. / 8.. / OpenAlias";
@@ -334,7 +334,7 @@ Rectangle {
                 inlineButton.fontPixelSize: 22
                 inlineButton.fontFamily: FontAwesome.fontFamily
                 inlineButton.textColor: MoneroComponents.Style.defaultFontColor
-                inlineButton.buttonColor: MoneroComponents.Style.orange
+                inlineButton.buttonColor: MoneroComponents.Style.yellow
                 inlineButton.onClicked: {
                     cameraUi.state = "Capture"
                     cameraUi.qrcode_decoded.connect(root.updateFromQrCode)
@@ -384,8 +384,8 @@ Rectangle {
             MoneroComponents.LineEditMulti {
                 id: descriptionLine
                 Layout.topMargin: 20
-                labelText: "<style type='text/css'>a {text-decoration: none; color: #858585; font-size: 14px;}</style> %1"
-                    .arg(qsTr("Description")) + translationManager.emptyString
+                labelText: qsTr("<style type='text/css'>a {text-decoration: none; color: #858585; font-size: 14px;}</style>\
+                                 Description") + translationManager.emptyString
                 placeholderText: qsTr("Add a name...") + translationManager.emptyString
             }
             RowLayout {

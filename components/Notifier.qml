@@ -1,21 +1,21 @@
-// Copyright (c) 2020, The Monero Project
-//
+// Copyright (c) 2017-2018, The Monero Project
+// 
 // All rights reserved.
-//
+// 
 // Redistribution and use in source and binary forms, with or without modification, are
 // permitted provided that the following conditions are met:
-//
+// 
 // 1. Redistributions of source code must retain the above copyright notice, this list of
 //    conditions and the following disclaimer.
-//
+// 
 // 2. Redistributions in binary form must reproduce the above copyright notice, this list
 //    of conditions and the following disclaimer in the documentation and/or other
 //    materials provided with the distribution.
-//
+// 
 // 3. Neither the name of the copyright holder nor the names of its contributors may be
 //    used to endorse or promote products derived from this software without specific
 //    prior written permission.
-//
+// 
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 // EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
@@ -26,82 +26,60 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
+import QtQuick 2.9
+import QtQuick.Controls 1.4
+import moneroComponents.Wallet 1.0
+import "." as MoneroComponents
 
-#include <vector>
+Item {
+    id: item
+    property string message: ""
+    property bool active: false
+    height: 180
+    width: 320
+    property int margin: 15
+    x: parent.width - width - margin
+    y: parent.height - height * scale.yScale - margin * scale.yScale
 
-#include <gcrypt.h>
-#include <span.h>
+    Rectangle {
+        color: "#FF6C3C"
+        border.color: "black"
+        anchors.fill: parent
 
-namespace openpgp
-{
-
-class hash
-{
-public:
-  enum algorithm : uint8_t
-  {
-    sha256 = 8,
-  };
-
-  hash(const hash &) = delete;
-  hash &operator=(const hash &) = delete;
-
-  hash(uint8_t algorithm)
-    : algorithm(algorithm)
-    , consumed(0)
-  {
-    if (gcry_md_open(&md, algorithm, 0) != GPG_ERR_NO_ERROR)
-    {
-      throw std::runtime_error("failed to create message digest object");
+        TextArea {
+            id:versionText
+            readOnly: true
+            backgroundVisible: false
+            textFormat: TextEdit.AutoText
+            anchors.fill: parent
+            font.family: MoneroComponents.Style.fontRegular.name
+            font.pixelSize: 12
+            textMargin: 20
+            textColor: "white"
+            text: item.message
+            wrapMode: Text.WrapAnywhere
+        }
     }
-  }
 
-  ~hash()
-  {
-    gcry_md_close(md);
-  }
+    transform: Scale {
+        id: scale
+        yScale: item.active ? 1 : 0
 
-  hash &operator<<(uint8_t byte)
-  {
-    gcry_md_putc(md, byte);
-    ++consumed;
-    return *this;
-  }
-
-  hash &operator<<(const epee::span<const uint8_t> &bytes)
-  {
-    gcry_md_write(md, &bytes[0], bytes.size());
-    consumed += bytes.size();
-    return *this;
-  }
-
-  hash &operator<<(const std::vector<uint8_t> &bytes)
-  {
-    return *this << epee::to_span(bytes);
-  }
-
-  std::vector<uint8_t> finish() const
-  {
-    std::vector<uint8_t> result(gcry_md_get_algo_dlen(algorithm));
-    const void *digest = gcry_md_read(md, algorithm);
-    if (digest == nullptr)
-    {
-      throw std::runtime_error("failed to read the digest");
+        Behavior on yScale {
+            NumberAnimation { duration: 500; easing.type: Easing.InOutCubic }
+        }
     }
-    memcpy(&result[0], digest, result.size());
-    return result;
-  }
 
-  size_t consumed_bytes() const
-  {
-    return consumed;
-  }
+    Timer {
+        id: hider
+        interval: 30000; running: false; repeat: false
+        onTriggered: { item.active = false }
+    }
 
-private:
-  const uint8_t algorithm;
-  gcry_md_hd_t md;
-  size_t consumed;
-};
-
+    function show(message) {
+        item.visible = true
+        item.message = message
+        item.active = true
+        hider.running = true
+    }
 }

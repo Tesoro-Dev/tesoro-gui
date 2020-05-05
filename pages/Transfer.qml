@@ -27,7 +27,6 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import QtQuick 2.9
-import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 import moneroComponents.Clipboard 1.0
@@ -39,7 +38,6 @@ import "../components"
 import "../components" as MoneroComponents
 import "." 1.0
 import "../js/TxUtils.js" as TxUtils
-import "../js/Utils.js" as Utils
 
 
 Rectangle {
@@ -80,7 +78,7 @@ Rectangle {
 
         return "";
     }
-    property string startLinkText: "<style type='text/css'>a {text-decoration: none; color: #FF6C3C; font-size: 14px;}</style><a href='#'>(%1)</a>".arg(qsTr("Start daemon")) + translationManager.emptyString
+    property string startLinkText: qsTr("<style type='text/css'>a {text-decoration: none; color: #FF6C3C; font-size: 14px;}</style><font size='2'> (</font><a href='#'>Start daemon</a><font size='2'>)</font>") + translationManager.emptyString
     property bool warningLongPidDescription: descriptionLine.text.match(/^[0-9a-f]{64}$/i)
 
     Clipboard { id: clipboard }
@@ -160,7 +158,7 @@ Rectangle {
           visible: leftPanel.minutesToUnlock !== ""
 
           MoneroComponents.WarningBox {
-              text: qsTr("Spendable funds: %1 XMR. Please wait ~%2 minutes for your whole balance to become spendable.").arg(leftPanel.balanceUnlockedString).arg(leftPanel.minutesToUnlock)
+              text: qsTr("Spendable funds: %1 TSX. Please wait ~%2 minutes for your whole balance to become spendable.").arg(leftPanel.balanceUnlockedString).arg(leftPanel.minutesToUnlock)
           }
       }
 
@@ -178,11 +176,11 @@ Rectangle {
                   id: amountLine
                   Layout.fillWidth: true
                   inlineIcon: true
-                  labelText: "<style type='text/css'>a {text-decoration: none; color: #858585; font-size: 14px;}</style>\
-                                   %1 <a href='#'>(%2)</a>".arg(qsTr("Amount")).arg(qsTr("Change account"))
+                  labelText: qsTr("<style type='text/css'>a {text-decoration: none; color: #858585; font-size: 14px;}</style>\
+                                   Amount <font size='2'>  ( </font> <a href='#'>Change account</a><font size='2'> )</font>")
                              + translationManager.emptyString
                   copyButton: !isNaN(amountLine.text) && persistentSettings.fiatPriceEnabled
-                  copyButtonText: "~%1 %2".arg(fiatApiConvertToFiat(amountLine.text)).arg(fiatApiCurrencySymbol())
+                  copyButtonText: fiatApiCurrencySymbol() + " ~" + fiatApiConvertToFiat(amountLine.text)
                   copyButtonEnabled: false
 
                   onLabelLinkActivated: {
@@ -213,61 +211,14 @@ Rectangle {
                       regExp: /^(\d{1,8})?([\.]\d{1,12})?$/
                   }
               }
-
-                MoneroComponents.TextPlain {
-                    id: feeLabel
-                    Layout.alignment: Qt.AlignRight
-                    Layout.topMargin: 12
-                    font.family: MoneroComponents.Style.fontRegular.name
-                    font.pixelSize: 14
-                    color: MoneroComponents.Style.defaultFontColor
-                    property bool estimating: false
-                    property var estimatedFee: null
-                    property string estimatedFeeFiat: {
-                        if (!persistentSettings.fiatPriceEnabled || estimatedFee == null) {
-                            return "";
-                        }
-                        const fiatFee = fiatApiConvertToFiat(estimatedFee);
-                        return " (%1 %3)".arg(fiatFee < 0.01 ? "<0.01" : "~" + fiatFee).arg(fiatApiCurrencySymbol());
-                    }
-                    property var fee: {
-                        estimatedFee = null;
-                        estimating = sendButton.enabled;
-                        if (!sendButton.enabled) {
-                            return;
-                        }
-                        currentWallet.estimateTransactionFeeAsync(
-                            addressLine.text,
-                            walletManager.amountFromString(amountLine.text),
-                            priorityModelV5.get(priorityDropdown.currentIndex).priority,
-                            function (amount) {
-                                estimatedFee = Utils.removeTrailingZeros(amount);
-                                estimating = false;
-                            });
-                    }
-                    text: {
-                        if (!sendButton.enabled || estimatedFee == null) {
-                            return ""
-                        }
-                        return "%1: ~%2 XMR".arg(qsTr("Fee")).arg(estimatedFee) +
-                            estimatedFeeFiat +
-                            translationManager.emptyString;
-                    }
-
-                    BusyIndicator {
-                        anchors.right: parent.right
-                        running: feeLabel.estimating
-                        height: parent.height
-                    }
-                }
           }
 
           ColumnLayout {
               visible: appWindow.walletMode >= 2
-              Layout.alignment: Qt.AlignTop
+              Layout.fillWidth: true
               Label {
                   id: transactionPriority
-                  Layout.topMargin: 0
+                  Layout.topMargin: 12
                   text: qsTr("Transaction priority") + translationManager.emptyString
                   fontBold: false
                   fontSize: 16
@@ -291,12 +242,14 @@ Rectangle {
                }
 
               StandardDropdown {
-                  Layout.preferredWidth: 200
+                  Layout.fillWidth: true
                   id: priorityDropdown
                   Layout.topMargin: 5
                   currentIndex: 0
               }
           }
+          // Make sure dropdown is on top
+          z: parent.z + 1
       }
 
       // recipient address input
@@ -309,7 +262,7 @@ Rectangle {
               spacing: 0
               fontBold: true
               labelText: qsTr("<style type='text/css'>a {text-decoration: none; color: #858585; font-size: 14px;}</style>\
-                %1 <a href='#'>(%2)</a>").arg(qsTr("Address")).arg(qsTr("Address book"))
+                Address <font size='2'>  ( </font> <a href='#'>Address book</a><font size='2'> )</font>")
                 + translationManager.emptyString
               labelButtonText: qsTr("Resolve") + translationManager.emptyString
               placeholderText: {
@@ -340,7 +293,7 @@ Rectangle {
               inlineButton.fontPixelSize: 22
               inlineButton.fontFamily: FontAwesome.fontFamily
               inlineButton.textColor: MoneroComponents.Style.defaultFontColor
-              inlineButton.buttonColor: MoneroComponents.Style.orange
+              inlineButton.buttonColor: MoneroComponents.Style.yellow
               inlineButton.onClicked: {
                   cameraUi.state = "Capture"
                   cameraUi.qrcode_decoded.connect(updateFromQrCode)
@@ -598,7 +551,7 @@ Rectangle {
                 id: importKeyImagesButton
                 text: qsTr("Import key images") + translationManager.emptyString
                 small: true
-                enabled: appWindow.viewOnly && appWindow.isTrustedDaemon()
+                enabled: appWindow.viewOnly && !persistentSettings.useRemoteNode
                 onClicked: {
                     console.log("Transfer: import key images clicked")
                     importKeyImagesDialog.open();
@@ -684,7 +637,7 @@ Rectangle {
                 informationPopup.open();
             } else {
                 informationPopup.title = qsTr("Information") + translationManager.emptyString
-                informationPopup.text  = qsTr("Monero sent successfully") + translationManager.emptyString
+                informationPopup.text  = qsTr("Tesoro sent successfully") + translationManager.emptyString
                 informationPopup.icon  = StandardIcon.Information
                 informationPopup.onCloseCallback = null
                 informationPopup.open();

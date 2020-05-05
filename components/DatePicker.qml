@@ -329,7 +329,7 @@ Item {
                             color: {
                                 if(!styleData.visibleMonth) return MoneroComponents.Style.lightGreyFontColor
                                 if(dayArea.pressed) return MoneroComponents.Style.defaultFontColor
-                                if(styleData.today) return MoneroComponents.Style.orange
+                                if(styleData.today) return MoneroComponents.Style.yellow
                                 return MoneroComponents.Style.defaultFontColor
                             }
                         }

@@ -30,14 +30,13 @@
 #define ADDRESSBOOK_H
 
 #include <wallet/api/wallet2_api.h>
-#include <QMap>
 #include <QObject>
 #include <QReadWriteLock>
 #include <QList>
 #include <QDateTime>
 
-namespace Monero {
-struct AddressBook;
+namespace Tesoro {
+class AddressBook;
 }
 class AddressBookRow;
 
@@ -45,14 +44,13 @@ class AddressBook : public QObject
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE bool getRow(int index, std::function<void (Monero::AddressBookRow &)> callback) const;
+    Q_INVOKABLE bool getRow(int index, std::function<void (Tesoro::AddressBookRow &)> callback) const;
     Q_INVOKABLE bool addRow(const QString &address, const QString &payment_id, const QString &description);
     Q_INVOKABLE bool deleteRow(int rowId);
     quint64 count() const;
     Q_INVOKABLE QString errorString() const;
     Q_INVOKABLE int errorCode() const;
     Q_INVOKABLE int lookupPaymentID(const QString &payment_id) const;
-    Q_INVOKABLE QString getDescription(const QString &address) const;
 
     enum ErrorCode {
         Status_Ok,
@@ -74,12 +72,11 @@ signals:
 public slots:
 
 private:
-    explicit AddressBook(Monero::AddressBook * abImpl, QObject *parent);
+    explicit AddressBook(Tesoro::AddressBook * abImpl, QObject *parent);
     friend class Wallet;
-    Monero::AddressBook * m_addressBookImpl;
+    Tesoro::AddressBook * m_addressBookImpl;
     mutable QReadWriteLock m_lock;
-    QList<Monero::AddressBookRow*> m_rows;
-    QMap<QString, size_t> m_addresses;
+    mutable QList<Tesoro::AddressBookRow*> m_rows;
 };
 
 #endif // ADDRESSBOOK_H

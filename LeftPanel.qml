@@ -239,7 +239,7 @@ Rectangle {
                         if (persistentSettings.fiatPriceEnabled && persistentSettings.fiatPriceToggle) {
                             return appWindow.fiatApiCurrencySymbol();
                         } else {
-                            return "XMR"
+                            return "TSX"
                         }
                     }
                     color: MoneroComponents.Style.blackTheme ? "white" : "black"
@@ -287,8 +287,8 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onEntered: {
-                            balancePart1.color = MoneroComponents.Style.orange
-                            balancePart2.color = MoneroComponents.Style.orange
+                            balancePart1.color = MoneroComponents.Style.yellow
+                            balancePart2.color = MoneroComponents.Style.yellow
                         }
                         onExited: {
                             balancePart1.color = Qt.binding(function() { return MoneroComponents.Style.blackTheme ? "white" : "black" })

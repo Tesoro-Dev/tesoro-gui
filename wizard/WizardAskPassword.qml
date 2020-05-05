@@ -87,7 +87,7 @@ ColumnLayout {
     }
 
     MoneroComponents.WarningBox {
-        text: "<b>%1</b> (%2).".arg(qsTr("Enter a strong password")).arg(qsTr("Using letters, numbers, and/or symbols")) + translationManager.emptyString
+        text: qsTr("<b>Enter a strong password</b> (Using letters, numbers, and/or symbols).") + translationManager.emptyString
     }
 
     ColumnLayout {
@@ -124,7 +124,7 @@ ColumnLayout {
                 property int maxWidth: bar.width
                 width: (maxWidth * root.passwordFill) / 100
                 radius: 8
-                color: MoneroComponents.Style.orange
+                color: MoneroComponents.Style.yellow
             }
 
             Rectangle {
