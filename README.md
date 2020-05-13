@@ -8,8 +8,8 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Development resources
 
-- Web: [getmonero.org](https://tesoro.dev/)
-- Mail: [dev@getmonero.org](mailto:tesorocurrency@gmail.com)
+- Web: [tesoro.dev/](https://tesoro.dev/)
+- Mail: [tesorocurrency@gmail.com](mailto:tesorocurrency@gmail.com)
 - Github: [https://github.com/tesoro-project/tesoro-gui](https://github.com/tesoro-dev/tesoro-gui)
 - IRC: [#tesoro-dev on Freenode](irc://chat.freenode.net/#tesoro-dev)
 - UI Design: [Monero-GUI on Figma](https://www.figma.com/file/DplJ2DDQfIKiuRvolHX2hN/Monero-GUI)
