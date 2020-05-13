@@ -14,11 +14,6 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 - IRC: [#tesoro-dev on Freenode](irc://chat.freenode.net/#tesoro-dev)
 - UI Design: [Monero-GUI on Figma](https://www.figma.com/file/DplJ2DDQfIKiuRvolHX2hN/Monero-GUI)
 
-## Vulnerability response
-
-- Our [Vulnerability Response Process](https://github.com/tesoro-dev/meta/blob/master/VULNERABILITY_RESPONSE_PROCESS.md) encourages responsible disclosure
-- We are also available via [HackerOne](https://hackerone.com/tesoro)
-
 ## About this project
 
 Tesoro (TSX) is  a  decentralized  cryptocurrency  based  on  PoW  consensus  that  uses  RandomX algorithm which favours CPU powered PCs over GPUs allowing average users to be a part of the creation and maintenance of its blockchain and network and also using modified Monero source code in Tesoro grants compatibility along with high security and privacy features. TesoroDev was  initiated as a  group  of  independent  of  developers spread  out  through many different countries to develop the Tesoro (TSX) cryptocurrency.
