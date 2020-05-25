@@ -1,3 +1,5 @@
+**If you face the current issue of your balance not showing properly in the GUI, e.g. not seeing the balance change when sending or receiving, follow these instructions: go to "Settings" > "Info" > "Wallet restore height" and click to change it to 0**
+
 # Tesoro GUI
 
 Copyright (c) 2014-2019 The Monero Project.
@@ -210,3 +212,4 @@ The Tesoro GUI on Windows is 64 bits only.
     **Note:** The use of `source` above is a dirty workaround for a suspected bug in the current QT version 5.11.2-3 available in the MSYS2 packaging system, see https://github.com/tesoro-dev/tesoro-gui/issues/1559 for more info.
 
 The executable can be found in the `.\release\bin` directory.
+
