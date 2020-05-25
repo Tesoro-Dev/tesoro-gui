@@ -1,4 +1,13 @@
-**If you face the current issue of your balance not showing properly in the GUI, e.g. not seeing the balance change when sending or receiving, follow these instructions: go to "Settings" > "Info" > "Wallet restore height" and click to change it to 0**
+**If you face the current issue of your balance not showing properly in the GUI, e.g. not seeing the balance change when sending or receiving, follow these instructions: go to "Settings" > "Info" > "Wallet restore height" and click to change it and fill in 0, follow the instructions afterwards.**
+
+<details>
+  <summary>Click to see visual instructions</summary>
+  
+  ![alt text](https://i.ibb.co/JKqM26M/settings.png)
+  ![alt text](https://i.ibb.co/YjMVPty/info.png)
+  ![alt text](https://i.ibb.co/JkskYSv/resheight.png)
+  ![alt text](https://i.ibb.co/FmGQbDS/cache.png)
+</details>
 
 # Tesoro GUI
 
