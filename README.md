@@ -3,10 +3,7 @@
 <details>
   <summary>Click to see visual instructions</summary>
   
-  ![alt text](https://i.ibb.co/JKqM26M/settings.png)
-  ![alt text](https://i.ibb.co/YjMVPty/info.png)
-  ![alt text](https://i.ibb.co/JkskYSv/resheight.png)
-  ![alt text](https://i.ibb.co/FmGQbDS/cache.png)
+
 </details>
 
 # Tesoro GUI
